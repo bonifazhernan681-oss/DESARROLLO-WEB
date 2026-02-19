@@ -1,0 +1,15 @@
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\bin\Debug\net10.0\semana10.exe
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\bin\Debug\net10.0\semana10.deps.json
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\bin\Debug\net10.0\semana10.runtimeconfig.json
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\bin\Debug\net10.0\semana10.dll
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\bin\Debug\net10.0\semana10.pdb
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\obj\Debug\net10.0\semana10.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\obj\Debug\net10.0\semana10.AssemblyInfoInputs.cache
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\obj\Debug\net10.0\semana10.AssemblyInfo.cs
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\obj\Debug\net10.0\semana10.csproj.CoreCompileInputs.cache
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\obj\Debug\net10.0\semana10.sourcelink.json
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\obj\Debug\net10.0\semana10.dll
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\obj\Debug\net10.0\refint\semana10.dll
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\obj\Debug\net10.0\semana10.pdb
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\obj\Debug\net10.0\semana10.genruntimeconfig.cache
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\semana10\obj\Debug\net10.0\ref\semana10.dll
