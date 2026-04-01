@@ -1,0 +1,15 @@
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\bin\Debug\net10.0\Practico-Experimental-4.exe
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\bin\Debug\net10.0\Practico-Experimental-4.deps.json
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\bin\Debug\net10.0\Practico-Experimental-4.runtimeconfig.json
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\bin\Debug\net10.0\Practico-Experimental-4.dll
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\bin\Debug\net10.0\Practico-Experimental-4.pdb
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\obj\Debug\net10.0\Practico-Experimental-4.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\obj\Debug\net10.0\Practico-Experimental-4.AssemblyInfoInputs.cache
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\obj\Debug\net10.0\Practico-Experimental-4.AssemblyInfo.cs
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\obj\Debug\net10.0\Practico-Experimental-4.csproj.CoreCompileInputs.cache
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\obj\Debug\net10.0\Practico-Experimental-4.sourcelink.json
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\obj\Debug\net10.0\Practico-Experimental-4.dll
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\obj\Debug\net10.0\refint\Practico-Experimental-4.dll
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\obj\Debug\net10.0\Practico-Experimental-4.pdb
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\obj\Debug\net10.0\Practico-Experimental-4.genruntimeconfig.cache
+C:\Users\USER\OneDrive\Desktop\ESTRUCTURA DE DATOS\Practico-Experimental-4\obj\Debug\net10.0\ref\Practico-Experimental-4.dll
