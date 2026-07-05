@@ -1,5 +1,7 @@
 // =============================================
-// script.js - Semana 5: Proyecto Integrador
+// script.js - Semana 6: Validaciones dinámicas
+// y manejo de formularios (Proyecto Integrador)
+// =============================================
 
 // Variable global para contar los registros
 let totalRegistros = 0;
@@ -7,74 +9,150 @@ let totalRegistros = 0;
 // Esperamos a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Seleccionamos el formulario
+    // =============================================
+    // REFERENCIAS AL DOM
+    // =============================================
     const formulario = document.getElementById('formCurso');
-
-    // Seleccionamos el contenedor donde se mostrarán los registros
     const listaRegistros = document.getElementById('listaRegistros');
-
-    // Seleccionamos el contador de registros
     const contadorRegistros = document.getElementById('contadorRegistros');
 
-    // Seleccionamos los campos del formulario
     const inputNombre = document.getElementById('nombreCurso');
     const inputDescripcion = document.getElementById('descripcionCurso');
     const selectCategoria = document.getElementById('categoriaCurso');
 
-    // Seleccionamos los mensajes de validación
     const errorNombre = document.getElementById('errorNombre');
     const errorDescripcion = document.getElementById('errorDescripcion');
     const errorCategoria = document.getElementById('errorCategoria');
+
+    const alertaExito = document.getElementById('alertaExito');
+    const alertaError = document.getElementById('alertaError');
+
+    // Reglas de validación (fáciles de ajustar si el docente pide otros valores)
+    const LONGITUD_MIN_NOMBRE = 5;
+    const LONGITUD_MIN_DESCRIPCION = 15;
+
+    // =============================================
+    // FUNCIONES AUXILIARES: aplicar estilos de validación
+    // =============================================
+
+    // Marca un campo como inválido y muestra su mensaje de error
+    function marcarInvalido(campo, elementoError, mensaje) {
+        campo.classList.remove('is-valid');
+        campo.classList.add('is-invalid');
+        elementoError.textContent = mensaje;
+        elementoError.style.display = 'block';
+    }
+
+    // Marca un campo como válido y oculta su mensaje de error
+    function marcarValido(campo, elementoError) {
+        campo.classList.remove('is-invalid');
+        campo.classList.add('is-valid');
+        elementoError.textContent = '';
+        elementoError.style.display = 'none';
+    }
+
+    // =============================================
+    // FUNCIONES DE VALIDACIÓN POR CAMPO (reutilizables)
+    // Cada una devuelve true/false y actualiza la UI
+    // =============================================
+
+    function validarNombre() {
+        const valor = inputNombre.value.trim();
+
+        if (valor === '') {
+            marcarInvalido(inputNombre, errorNombre, '⚠️ El nombre del curso es obligatorio.');
+            return false;
+        }
+        if (valor.length < LONGITUD_MIN_NOMBRE) {
+            marcarInvalido(inputNombre, errorNombre, `⚠️ Debe tener al menos ${LONGITUD_MIN_NOMBRE} caracteres.`);
+            return false;
+        }
+
+        marcarValido(inputNombre, errorNombre);
+        return true;
+    }
+
+    function validarDescripcion() {
+        const valor = inputDescripcion.value.trim();
+
+        if (valor === '') {
+            marcarInvalido(inputDescripcion, errorDescripcion, '⚠️ La descripción es obligatoria.');
+            return false;
+        }
+        if (valor.length < LONGITUD_MIN_DESCRIPCION) {
+            marcarInvalido(inputDescripcion, errorDescripcion, `⚠️ Agrega más detalle (mínimo ${LONGITUD_MIN_DESCRIPCION} caracteres).`);
+            return false;
+        }
+
+        marcarValido(inputDescripcion, errorDescripcion);
+        return true;
+    }
+
+    function validarCategoria() {
+        if (selectCategoria.value === '') {
+            marcarInvalido(selectCategoria, errorCategoria, '⚠️ Debes seleccionar una categoría.');
+            return false;
+        }
+
+        marcarValido(selectCategoria, errorCategoria);
+        return true;
+    }
+
+    // Ejecuta las tres validaciones y devuelve true solo si todas pasan
+    function validarFormularioCompleto() {
+        const nombreValido = validarNombre();
+        const descripcionValida = validarDescripcion();
+        const categoriaValida = validarCategoria();
+        return nombreValido && descripcionValida && categoriaValida;
+    }
+
+    // Limpia clases y mensajes de validación (se usa tras un registro exitoso)
+    function limpiarEstadosVisuales() {
+        [inputNombre, inputDescripcion, selectCategoria].forEach(function (campo) {
+            campo.classList.remove('is-valid', 'is-invalid');
+        });
+        [errorNombre, errorDescripcion, errorCategoria].forEach(function (elemento) {
+            elemento.style.display = 'none';
+            elemento.textContent = '';
+        });
+    }
+
+    // =============================================
+    // VALIDACIÓN EN TIEMPO REAL (input y blur)
+    // =============================================
+
+    inputNombre.addEventListener('input', validarNombre);
+    inputNombre.addEventListener('blur', validarNombre);
+
+    inputDescripcion.addEventListener('input', validarDescripcion);
+    inputDescripcion.addEventListener('blur', validarDescripcion);
+
+    selectCategoria.addEventListener('input', validarCategoria);
+    selectCategoria.addEventListener('blur', validarCategoria);
 
     // =============================================
     // EVENTO SUBMIT del formulario
     // =============================================
     formulario.addEventListener('submit', function (e) {
-
         // Evitamos que la página se recargue
         e.preventDefault();
 
-        // Obtenemos los valores del formulario
+        // Validamos todos los campos antes de registrar
+        if (!validarFormularioCompleto()) {
+            mostrarMensajeError();
+            return;
+        }
+
+        // Si todo está bien, obtenemos los valores y creamos el registro
         const nombre = inputNombre.value.trim();
         const descripcion = inputDescripcion.value.trim();
         const categoria = selectCategoria.value;
 
-        // Reseteamos mensajes de error anteriores
-        resetarErrores();
-
-        // Validamos que los campos no estén vacíos
-        let hayErrores = false;
-
-        if (nombre === '') {
-            errorNombre.textContent = '⚠️ El nombre del curso es obligatorio.';
-            errorNombre.style.display = 'block';
-            inputNombre.classList.add('is-invalid');
-            hayErrores = true;
-        }
-
-        if (descripcion === '') {
-            errorDescripcion.textContent = '⚠️ La descripción es obligatoria.';
-            errorDescripcion.style.display = 'block';
-            inputDescripcion.classList.add('is-invalid');
-            hayErrores = true;
-        }
-
-        if (categoria === '') {
-            errorCategoria.textContent = '⚠️ Debes seleccionar una categoría.';
-            errorCategoria.style.display = 'block';
-            selectCategoria.classList.add('is-invalid');
-            hayErrores = true;
-        }
-
-        // Si hay errores, no continuamos
-        if (hayErrores) return;
-
-        // Si todo está bien, creamos el registro
         crearRegistro(nombre, descripcion, categoria);
 
-        // Limpiamos el formulario
+        // Limpiamos el formulario y sus estados visuales
         formulario.reset();
-        resetarErrores();
+        limpiarEstadosVisuales();
 
         // Mostramos mensaje de éxito
         mostrarMensajeExito();
@@ -84,11 +162,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // FUNCIÓN: Crear un nuevo registro en el DOM
     // =============================================
     function crearRegistro(nombre, descripcion, categoria) {
-
         // Incrementamos el contador
         totalRegistros++;
-
-        // Actualizamos el contador en pantalla
         actualizarContador();
 
         // Creamos el contenedor principal del registro (div)
@@ -129,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
             eliminarRegistro(divRegistro);
         });
 
-        // Ensamblamos la card con appendChild
+        // Ensamblamos la card
         cardBody.appendChild(badge);
         cardBody.appendChild(titulo);
         cardBody.appendChild(parrafo);
@@ -166,32 +241,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // =============================================
-    // FUNCIÓN: Resetear mensajes de error
-    // =============================================
-    function resetarErrores() {
-        errorNombre.style.display = 'none';
-        errorNombre.textContent = '';
-        inputNombre.classList.remove('is-invalid');
-
-        errorDescripcion.style.display = 'none';
-        errorDescripcion.textContent = '';
-        inputDescripcion.classList.remove('is-invalid');
-
-        errorCategoria.style.display = 'none';
-        errorCategoria.textContent = '';
-        selectCategoria.classList.remove('is-invalid');
-    }
-
-    // =============================================
     // FUNCIÓN: Mostrar mensaje de éxito
     // =============================================
     function mostrarMensajeExito() {
-        const alerta = document.getElementById('alertaExito');
-        alerta.style.display = 'block';
+        alertaError.style.display = 'none';
+        alertaExito.style.display = 'block';
 
-        // Ocultamos la alerta después de 3 segundos
         setTimeout(function () {
-            alerta.style.display = 'none';
+            alertaExito.style.display = 'none';
+        }, 3000);
+    }
+
+    // =============================================
+    // FUNCIÓN: Mostrar mensaje de error general
+    // =============================================
+    function mostrarMensajeError() {
+        alertaExito.style.display = 'none';
+        alertaError.style.display = 'block';
+
+        setTimeout(function () {
+            alertaError.style.display = 'none';
         }, 3000);
     }
 

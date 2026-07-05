@@ -1,544 +1,549 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desarrollo Web</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desarrollo Web</title>
+<!-- Bootstrap CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- CSS3 personalizado -->
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+}
 
-    <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+header {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
 
-    <!-- CSS3 personalizado -->
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-            background-color: #f8f9fa;
-        }
+header h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+}
 
-        header {
-            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-        }
+header p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
 
-        header h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
-        }
+.navbar {
+    background-color: #0d6efd;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
 
-        header p {
-            font-size: 1.2rem;
-            margin-top: 10px;
-        }
+.navbar-brand, .nav-link {
+    color: white !important;
+    font-weight: 500;
+}
 
-        .navbar {
-            background-color: #0d6efd;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
+.nav-link:hover {
+    color: #cce5ff !important;
+}
 
-        .navbar-brand, .nav-link {
-            color: white !important;
-            font-weight: 500;
-        }
+section {
+    padding: 60px 0;
+}
 
-        .nav-link:hover {
-            color: #cce5ff !important;
-        }
+section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 20px;
+    border-left: 5px solid #0dcaf0;
+    padding-left: 12px;
+}
 
-        section {
-            padding: 60px 0;
-        }
+#inicio {
+    background-color: #ffffff;
+}
 
-        section h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #0d6efd;
-            margin-bottom: 20px;
-            border-left: 5px solid #0dcaf0;
-            padding-left: 12px;
-        }
+#inicio p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
 
-        #inicio {
-            background-color: #ffffff;
-        }
+#quienes-somos {
+    background-color: #eaf4ff;
+}
 
-        #inicio p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
+#quienes-somos img {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
 
-        #quienes-somos {
-            background-color: #eaf4ff;
-        }
+#servicios {
+    background-color: #ffffff;
+}
 
-        #quienes-somos img {
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
 
-        #servicios {
-            background-color: #ffffff;
-        }
+.card:hover {
+    transform: translateY(-5px);
+}
 
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
+.card-title {
+    color: #0d6efd;
+    font-weight: 600;
+}
 
-        .card:hover {
-            transform: translateY(-5px);
-        }
+#video {
+    background-color: #eaf4ff;
+    text-align: center;
+}
 
-        .card-title {
-            color: #0d6efd;
-            font-weight: 600;
-        }
+#video iframe {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    max-width: 100%;
+}
 
-        #video {
-            background-color: #eaf4ff;
-            text-align: center;
-        }
+aside {
+    background-color: #fff3cd;
+    border-left: 5px solid #ffc107;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin: 40px 0;
+}
 
-        #video iframe {
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            max-width: 100%;
-        }
+aside h3 {
+    color: #856404;
+    font-weight: 700;
+}
 
-        aside {
-            background-color: #fff3cd;
-            border-left: 5px solid #ffc107;
-            border-radius: 8px;
-            padding: 20px 25px;
-            margin: 40px 0;
-        }
+#contacto {
+    background-color: #ffffff;
+}
 
-        aside h3 {
-            color: #856404;
-            font-weight: 700;
-        }
+#contacto .form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    margin-bottom: 15px;
+}
 
-        #contacto {
-            background-color: #ffffff;
-        }
+#contacto .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13,110,253,0.3);
+}
 
-        #contacto .form-control {
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-            margin-bottom: 15px;
-        }
+.btn-contacto {
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 30px;
+    font-weight: 600;
+    border: none;
+}
 
-        #contacto .form-control:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 5px rgba(13,110,253,0.3);
-        }
+.btn-contacto:hover {
+    background-color: #0b5ed7;
+}
 
-        .btn-contacto {
-            background-color: #0d6efd;
-            color: white;
-            border-radius: 8px;
-            padding: 10px 30px;
-            font-weight: 600;
-            border: none;
-        }
+.btn-red {
+    border-radius: 20px;
+    font-weight: 500;
+    margin: 5px;
+    padding: 8px 20px;
+}
 
-        .btn-contacto:hover {
-            background-color: #0b5ed7;
-        }
+/* =============================================
+   ESTILOS SECCIÓN DINÁMICA - SEMANA 5/6
+   ============================================= */
+#registrar-curso {
+    background-color: #f0f7ff;
+}
 
-        .btn-red {
-            border-radius: 20px;
-            font-weight: 500;
-            margin: 5px;
-            padding: 8px 20px;
-        }
+#registrar-curso .form-label {
+    font-weight: 600;
+    color: #0d6efd;
+}
 
-        /* =============================================
-           ESTILOS SECCIÓN DINÁMICA - SEMANA 5
-        ============================================= */
-        #registrar-curso {
-            background-color: #f0f7ff;
-        }
+#registrar-curso .form-control,
+#registrar-curso .form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+}
 
-        #registrar-curso .form-label {
-            font-weight: 600;
-            color: #0d6efd;
-        }
+#registrar-curso .form-control:focus,
+#registrar-curso .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13,110,253,0.3);
+}
 
-        #registrar-curso .form-control,
-        #registrar-curso .form-select {
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-        }
+.mensaje-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    display: none;
+    margin-top: 4px;
+}
 
-        #registrar-curso .form-control:focus,
-        #registrar-curso .form-select:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 5px rgba(13,110,253,0.3);
-        }
+.mensaje-exito-campo {
+    color: #198754;
+    font-size: 0.875rem;
+    display: none;
+    margin-top: 4px;
+}
 
-        .mensaje-error {
-            color: #dc3545;
-            font-size: 0.875rem;
-            display: none;
-            margin-top: 4px;
-        }
+#alertaExito, #alertaError {
+    display: none;
+}
 
-        #alertaExito {
-            display: none;
-        }
+#seccionRegistros {
+    display: none;
+    margin-top: 40px;
+}
 
-        #seccionRegistros {
-            display: none;
-            margin-top: 40px;
-        }
+.contador-badge {
+    background-color: #0d6efd;
+    color: white;
+    font-size: 1rem;
+    padding: 8px 20px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
 
-        .contador-badge {
-            background-color: #0d6efd;
-            color: white;
-            font-size: 1rem;
-            padding: 8px 20px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
+.registro-item .card {
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
 
-        .registro-item .card {
-            border-radius: 10px;
-            transition: transform 0.2s ease;
-        }
+.registro-item .card:hover {
+    transform: translateY(-4px);
+}
 
-        .registro-item .card:hover {
-            transform: translateY(-4px);
-        }
+footer {
+    background-color: #0d6efd;
+    color: white;
+    text-align: center;
+    padding: 25px 10px;
+    font-size: 0.95rem;
+}
 
-        footer {
-            background-color: #0d6efd;
-            color: white;
-            text-align: center;
-            padding: 25px 10px;
-            font-size: 0.95rem;
-        }
-
-        @media (max-width: 576px) {
-            header h1 {
-                font-size: 1.8rem;
-            }
-
-            header p {
-                font-size: 1rem;
-            }
-
-            section h2 {
-                font-size: 1.5rem;
-            }
-
-            #video iframe {
-                width: 100%;
-                height: 220px;
-            }
-        }
-    </style>
+@media (max-width: 576px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    header p {
+        font-size: 1rem;
+    }
+    section h2 {
+        font-size: 1.5rem;
+    }
+    #video iframe {
+        width: 100%;
+        height: 220px;
+    }
+}
+</style>
 </head>
 <body>
 
-    <header>
-        <h1>Desarrollo Web</h1>
-        <p>Plataforma para el aprendizaje y desarrollo de aplicaciones web modernas</p>
-    </header>
+<header>
+    <h1>Desarrollo Web</h1>
+    <p>Plataforma para el aprendizaje y desarrollo de aplicaciones web modernas</p>
+</header>
 
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">Desarrollo Web</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNav">
-                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="menuNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#quienes-somos">Quiénes Somos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#registrar-curso">Registrar Curso</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-                </ul>
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">Desarrollo Web</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNav">
+            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="menuNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="#quienes-somos">Quiénes Somos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#registrar-curso">Registrar Curso</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main>
+
+<!-- SECCIÓN INICIO (sin cambios) -->
+<section id="inicio">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2>Inicio</h2>
+                <p>
+                    Bienvenido a <strong>Desarrollo Web</strong>, tu plataforma de referencia para aprender
+                    y dominar el desarrollo de aplicaciones web modernas. Aquí encontrarás recursos,
+                    guías y proyectos prácticos diseñados para llevarte desde los fundamentos hasta
+                    niveles avanzados de programación web.
+                </p>
+                <a href="#quienes-somos" class="btn btn-primary btn-lg mt-2">Conócenos</a>
+                <a href="#servicios" class="btn btn-outline-primary btn-lg mt-2 ms-2">Ver Servicios</a>
+            </div>
+            <div class="col-md-4 text-center mt-4 mt-md-0">
+                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400"
+                     alt="Programación web" class="img-fluid rounded shadow">
             </div>
         </div>
-    </nav>
+    </div>
+</section>
 
-    <main>
-
-        <!-- SECCIÓN INICIO (sin cambios) -->
-        <section id="inicio">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h2>Inicio</h2>
-                        <p>
-                            Bienvenido a <strong>Desarrollo Web</strong>, tu plataforma de referencia para aprender
-                            y dominar el desarrollo de aplicaciones web modernas. Aquí encontrarás recursos,
-                            guías y proyectos prácticos diseñados para llevarte desde los fundamentos hasta
-                            niveles avanzados de programación web.
-                        </p>
-                        <a href="#quienes-somos" class="btn btn-primary btn-lg mt-2">Conócenos</a>
-                        <a href="#servicios" class="btn btn-outline-primary btn-lg mt-2 ms-2">Ver Servicios</a>
-                    </div>
-                    <div class="col-md-4 text-center mt-4 mt-md-0">
-                        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400"
-                             alt="Programación web" class="img-fluid rounded shadow">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN QUIÉNES SOMOS (sin cambios) -->
-        <section id="quienes-somos">
-            <div class="container">
-                <h2>Quiénes Somos</h2>
-                <article>
-                    <div class="row align-items-center">
-                        <div class="col-md-6">
-                            <p>
-                                Somos un equipo comprometido con la educación tecnológica y el desarrollo de
-                                habilidades digitales en estudiantes y profesionales de toda América Latina.
-                                Nuestra plataforma nació con la visión de hacer accesible el aprendizaje del
-                                desarrollo web a cualquier persona con ganas de aprender, sin importar su nivel
-                                de experiencia previo.
-                            </p>
-                            <p>
-                                Creemos que la programación web es una herramienta fundamental en el mundo actual,
-                                y por eso ofrecemos contenidos actualizados, proyectos integradores y acompañamiento
-                                personalizado. Nuestros módulos cubren desde HTML5 y CSS3 hasta JavaScript, bases
-                                de datos y despliegue en la nube. Trabajamos con metodologías activas que permiten
-                                al estudiante aprender haciendo, aplicando cada concepto en proyectos reales que
-                                fortalecen su portafolio profesional y aumentan sus oportunidades laborales en el
-                                sector tecnológico.
-                            </p>
-                        </div>
-                        <div class="col-md-6 text-center mt-4 mt-md-0">
-                            <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600"
-                                 alt="Desarrollo de aplicaciones web" class="img-fluid">
-                        </div>
-                    </div>
-                </article>
-
-                <aside>
-                    <h3>Información adicional</h3>
-                    <p><strong>Horarios de atención:</strong> Lunes a viernes, 08:00 – 18:00</p>
-                    <p><strong>Próximo taller:</strong> Introducción a JavaScript – 20 de junio de 2026</p>
-                    <p><strong>Promoción:</strong> Acceso gratuito al módulo de HTML5 durante este mes.</p>
-                </aside>
-            </div>
-        </section>
-
-        <!-- SECCIÓN SERVICIOS (sin cambios) -->
-        <section id="servicios">
-            <div class="container">
-                <h2>Servicios</h2>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="card h-100 p-3">
-                            <div class="card-body">
-                                <h5 class="card-title">📘 Cursos desde cero</h5>
-                                <p class="card-text">Aprende HTML5, CSS3 y JavaScript desde los fundamentos con ejemplos prácticos y proyectos reales.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card h-100 p-3">
-                            <div class="card-body">
-                                <h5 class="card-title">🛠️ Proyectos integradores</h5>
-                                <p class="card-text">Desarrolla proyectos completos con retroalimentación personalizada para fortalecer tu portafolio.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card h-100 p-3">
-                            <div class="card-body">
-                                <h5 class="card-title">🐙 Git y GitHub</h5>
-                                <p class="card-text">Domina el control de versiones con talleres prácticos de Git y GitHub para trabajo colaborativo.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card h-100 p-3">
-                            <div class="card-body">
-                                <h5 class="card-title">🗄️ Bases de datos</h5>
-                                <p class="card-text">Módulos de bases de datos relacionales y no relacionales aplicadas al desarrollo web moderno.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card h-100 p-3">
-                            <div class="card-body">
-                                <h5 class="card-title">☁️ Despliegue en la nube</h5>
-                                <p class="card-text">Aprende a publicar y escalar tus aplicaciones web usando servicios en la nube modernos.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card h-100 p-3">
-                            <div class="card-body">
-                                <h5 class="card-title">🏆 Certificados digitales</h5>
-                                <p class="card-text">Obtén certificados digitales al completar cada módulo y valida tus conocimientos ante empleadores.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN VIDEO (sin cambios) -->
-        <section id="video">
-            <div class="container">
-                <h2 class="text-center">Video relacionado</h2>
-                <div class="row justify-content-center mt-4">
-                    <div class="col-md-8">
-                        <iframe width="100%" height="380"
-                            src="https://www.youtube.com/embed/rr2H086z16s"
-                            title="Curso HTML5 en español"
-                            allowfullscreen>
-                        </iframe>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- =============================================
-             SECCIÓN DINÁMICA - SEMANA 5 (NUEVA)
-        ============================================= -->
-        <section id="registrar-curso">
-            <div class="container">
-                <h2>Registrar Curso</h2>
-                <p class="text-muted mb-4">Completa el formulario para registrar un nuevo curso en la plataforma.</p>
-
-                <!-- FORMULARIO DINÁMICO -->
-                <div class="row justify-content-center">
-                    <div class="col-md-8 col-lg-6">
-                        <div class="card p-4 shadow-sm">
-                            <div class="card-body">
-
-                                <!-- Alerta de éxito -->
-                                <div id="alertaExito" class="alert alert-success" role="alert">
-                                    ✅ ¡Curso registrado exitosamente!
-                                </div>
-
-                                <form id="formCurso" novalidate>
-
-                                    <!-- Campo: Nombre del curso -->
-                                    <div class="mb-3">
-                                        <label for="nombreCurso" class="form-label">Nombre del curso</label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="nombreCurso"
-                                            placeholder="Ej: Introducción a HTML5">
-                                        <div class="mensaje-error" id="errorNombre"></div>
-                                    </div>
-
-                                    <!-- Campo: Descripción -->
-                                    <div class="mb-3">
-                                        <label for="descripcionCurso" class="form-label">Descripción</label>
-                                        <textarea
-                                            class="form-control"
-                                            id="descripcionCurso"
-                                            rows="3"
-                                            placeholder="Describe brevemente el contenido del curso..."></textarea>
-                                        <div class="mensaje-error" id="errorDescripcion"></div>
-                                    </div>
-
-                                    <!-- Campo: Categoría -->
-                                    <div class="mb-3">
-                                        <label for="categoriaCurso" class="form-label">Categoría</label>
-                                        <select class="form-select" id="categoriaCurso">
-                                            <option value="">-- Selecciona una categoría --</option>
-                                            <option value="Frontend">Frontend</option>
-                                            <option value="Backend">Backend</option>
-                                            <option value="Base de Datos">Base de Datos</option>
-                                            <option value="DevOps">DevOps</option>
-                                            <option value="Diseño Web">Diseño Web</option>
-                                        </select>
-                                        <div class="mensaje-error" id="errorCategoria"></div>
-                                    </div>
-
-                                    <!-- Botón registrar -->
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary fw-bold">
-                                            ➕ Registrar Curso
-                                        </button>
-                                    </div>
-
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECCIÓN DE REGISTROS CREADOS -->
-                <div id="seccionRegistros">
-                    <hr class="my-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-                        <h4 class="fw-bold text-primary mb-0">📋 Cursos Registrados</h4>
-                        <span class="contador-badge">
-                            Total de registros: <span id="contadorRegistros">0</span>
-                        </span>
-                    </div>
-                    <div class="row g-3" id="listaRegistros">
-                        <!-- Los registros se agregan aquí dinámicamente con JavaScript -->
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-    </main>
-
-    <!-- SECCIÓN CONTACTO (sin cambios) -->
-    <section id="contacto">
-        <div class="container">
-            <h2>Contacto</h2>
-            <div class="row g-4">
-                <div class="col-md-5">
-                    <p><strong>Correo electrónico:</strong><br>
-                        <a href="mailto:dariobonifaz000@gmail.com">dariobonifaz000@gmail.com</a>
+<!-- SECCIÓN QUIÉNES SOMOS (sin cambios) -->
+<section id="quienes-somos">
+    <div class="container">
+        <h2>Quiénes Somos</h2>
+        <article>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p>
+                        Somos un equipo comprometido con la educación tecnológica y el desarrollo de
+                        habilidades digitales en estudiantes y profesionales de toda América Latina.
+                        Nuestra plataforma nació con la visión de hacer accesible el aprendizaje del
+                        desarrollo web a cualquier persona con ganas de aprender, sin importar su nivel
+                        de experiencia previo.
                     </p>
-                    <p><strong>Teléfono:</strong><br>
-                        <a href="tel:+593983421964">0983421964</a>
+                    <p>
+                        Creemos que la programación web es una herramienta fundamental en el mundo actual,
+                        y por eso ofrecemos contenidos actualizados, proyectos integradores y acompañamiento
+                        personalizado. Nuestros módulos cubren desde HTML5 y CSS3 hasta JavaScript, bases
+                        de datos y despliegue en la nube. Trabajamos con metodologías activas que permiten
+                        al estudiante aprender haciendo, aplicando cada concepto en proyectos reales que
+                        fortalecen su portafolio profesional y aumentan sus oportunidades laborales en el
+                        sector tecnológico.
                     </p>
-                    <p><strong>Dirección:</strong><br>Guayaquil, Ecuador</p>
-                    <p><strong>Redes sociales:</strong></p>
-                    <a href="https://github.com/" target="_blank" class="btn btn-dark btn-red">GitHub</a>
-                    <a href="https://www.linkedin.com/" target="_blank" class="btn btn-primary btn-red">LinkedIn</a>
-                    <a href="https://www.instagram.com/" target="_blank" class="btn btn-danger btn-red">Instagram</a>
                 </div>
-                <div class="col-md-7">
-                    <form>
-                        <input type="text" class="form-control" placeholder="Tu nombre completo" required>
-                        <input type="email" class="form-control" placeholder="Tu correo electrónico" required>
-                        <input type="text" class="form-control" placeholder="Asunto">
-                        <textarea class="form-control" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
-                        <button type="submit" class="btn btn-contacto mt-2">Enviar mensaje</button>
-                    </form>
+                <div class="col-md-6 text-center mt-4 mt-md-0">
+                    <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600"
+                         alt="Desarrollo de aplicaciones web" class="img-fluid">
+                </div>
+            </div>
+        </article>
+        <aside>
+            <h3>Información adicional</h3>
+            <p><strong>Horarios de atención:</strong> Lunes a viernes, 08:00 – 18:00</p>
+            <p><strong>Próximo taller:</strong> Introducción a JavaScript – 20 de junio de 2026</p>
+            <p><strong>Promoción:</strong> Acceso gratuito al módulo de HTML5 durante este mes.</p>
+        </aside>
+    </div>
+</section>
+
+<!-- SECCIÓN SERVICIOS (sin cambios) -->
+<section id="servicios">
+    <div class="container">
+        <h2>Servicios</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">📘 Cursos desde cero</h5>
+                        <p class="card-text">Aprende HTML5, CSS3 y JavaScript desde los fundamentos con ejemplos prácticos y proyectos reales.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">🛠️ Proyectos integradores</h5>
+                        <p class="card-text">Desarrolla proyectos completos con retroalimentación personalizada para fortalecer tu portafolio.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">🐙 Git y GitHub</h5>
+                        <p class="card-text">Domina el control de versiones con talleres prácticos de Git y GitHub para trabajo colaborativo.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">🗄️ Bases de datos</h5>
+                        <p class="card-text">Módulos de bases de datos relacionales y no relacionales aplicadas al desarrollo web moderno.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">☁️ Despliegue en la nube</h5>
+                        <p class="card-text">Aprende a publicar y escalar tus aplicaciones web usando servicios en la nube modernos.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">🏆 Certificados digitales</h5>
+                        <p class="card-text">Obtén certificados digitales al completar cada módulo y valida tus conocimientos ante empleadores.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <footer>
-        <p>Desarrollado por Hernan Bonifaz | Asignatura: Desarrollo de Aplicaciones Web | Año: 2026</p>
-    </footer>
+<!-- SECCIÓN VIDEO (sin cambios) -->
+<section id="video">
+    <div class="container">
+        <h2 class="text-center">Video relacionado</h2>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <iframe width="100%" height="380"
+                    src="https://www.youtube.com/embed/rr2H086z16s"
+                    title="Curso HTML5 en español"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- =============================================
+     SECCIÓN DINÁMICA - SEMANA 5/6
+     ============================================= -->
+<section id="registrar-curso">
+    <div class="container">
+        <h2>Registrar Curso</h2>
+        <p class="text-muted mb-4">Completa el formulario para registrar un nuevo curso en la plataforma.</p>
 
-    <!-- JavaScript externo - Semana 5 (enlazado al final del documento) -->
-    <script src="script.js"></script>
+        <!-- FORMULARIO DINÁMICO -->
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card p-4 shadow-sm">
+                    <div class="card-body">
+
+                        <!-- Alerta de éxito -->
+                        <div id="alertaExito" class="alert alert-success" role="alert">
+                            ✅ ¡Curso registrado exitosamente!
+                        </div>
+
+                        <!-- Alerta de error general -->
+                        <div id="alertaError" class="alert alert-danger" role="alert">
+                            ❌ Revisa los campos marcados antes de registrar el curso.
+                        </div>
+
+                        <form id="formCurso" novalidate>
+
+                            <!-- Campo: Nombre del curso -->
+                            <div class="mb-3">
+                                <label for="nombreCurso" class="form-label">Nombre del curso</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="nombreCurso"
+                                    placeholder="Ej: Introducción a HTML5">
+                                <div class="mensaje-error" id="errorNombre"></div>
+                            </div>
+
+                            <!-- Campo: Descripción -->
+                            <div class="mb-3">
+                                <label for="descripcionCurso" class="form-label">Descripción</label>
+                                <textarea
+                                    class="form-control"
+                                    id="descripcionCurso"
+                                    rows="3"
+                                    placeholder="Describe brevemente el contenido del curso..."></textarea>
+                                <div class="mensaje-error" id="errorDescripcion"></div>
+                            </div>
+
+                            <!-- Campo: Categoría -->
+                            <div class="mb-3">
+                                <label for="categoriaCurso" class="form-label">Categoría</label>
+                                <select class="form-select" id="categoriaCurso">
+                                    <option value="">-- Selecciona una categoría --</option>
+                                    <option value="Frontend">Frontend</option>
+                                    <option value="Backend">Backend</option>
+                                    <option value="Base de Datos">Base de Datos</option>
+                                    <option value="DevOps">DevOps</option>
+                                    <option value="Diseño Web">Diseño Web</option>
+                                </select>
+                                <div class="mensaje-error" id="errorCategoria"></div>
+                            </div>
+
+                            <!-- Botón registrar -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary fw-bold">
+                                    ➕ Registrar Curso
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN DE REGISTROS CREADOS -->
+        <div id="seccionRegistros">
+            <hr class="my-4">
+            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                <h4 class="fw-bold text-primary mb-0">📋 Cursos Registrados</h4>
+                <span class="contador-badge">
+                    Total de registros: <span id="contadorRegistros">0</span>
+                </span>
+            </div>
+            <div class="row g-3" id="listaRegistros">
+                <!-- Los registros se agregan aquí dinámicamente con JavaScript -->
+            </div>
+        </div>
+
+    </div>
+</section>
+
+</main>
+
+<!-- SECCIÓN CONTACTO (sin cambios) -->
+<section id="contacto">
+    <div class="container">
+        <h2>Contacto</h2>
+        <div class="row g-4">
+            <div class="col-md-5">
+                <p><strong>Correo electrónico:</strong><br>
+                    <a href="mailto:dariobonifaz000@gmail.com">dariobonifaz000@gmail.com</a>
+                </p>
+                <p><strong>Teléfono:</strong><br>
+                    <a href="tel:+593983421964">0983421964</a>
+                </p>
+                <p><strong>Dirección:</strong><br>Guayaquil, Ecuador</p>
+                <p><strong>Redes sociales:</strong></p>
+                <a href="https://github.com/" target="_blank" class="btn btn-dark btn-red">GitHub</a>
+                <a href="https://www.linkedin.com/" target="_blank" class="btn btn-primary btn-red">LinkedIn</a>
+                <a href="https://www.instagram.com/" target="_blank" class="btn btn-danger btn-red">Instagram</a>
+            </div>
+            <div class="col-md-7">
+                <form>
+                    <input type="text" class="form-control" placeholder="Tu nombre completo" required>
+                    <input type="email" class="form-control" placeholder="Tu correo electrónico" required>
+                    <input type="text" class="form-control" placeholder="Asunto">
+                    <textarea class="form-control" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                    <button type="submit" class="btn btn-contacto mt-2">Enviar mensaje</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>Desarrollado por Hernan Bonifaz | Asignatura: Desarrollo de Aplicaciones Web | Año: 2026</p>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- JavaScript externo - Semana 6 (enlazado al final del documento) -->
+<script src="script.js"></script>
 
 </body>
 </html>
