@@ -459,8 +459,9 @@ footer {
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary fw-bold">
-                                    ➕ Registrar Curso
+                                <button type="submit" class="btn btn-primary fw-bold" id="btnRegistrarCurso">
+                                    <span class="spinner-border spinner-border-sm me-2 d-none" id="spinnerRegistrar" role="status" aria-hidden="true"></span>
+                                    <span id="textoBtnRegistrar">➕ Registrar Curso</span>
                                 </button>
                             </div>
                         </form>
@@ -486,6 +487,46 @@ footer {
     </div>
 </section>
 
+<!-- Modal: Ver detalle del curso -->
+<div class="modal fade" id="modalDetalleCurso" tabindex="-1" aria-labelledby="modalDetalleCursoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="modalDetalleCursoLabel">📘 Detalle del curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Nombre:</strong> <span id="detalleNombre"></span></p>
+                <p><strong>Descripción:</strong> <span id="detalleDescripcion"></span></p>
+                <p><strong>Categoría:</strong> <span id="detalleCategoria"></span></p>
+                <p class="mb-0"><strong>Registrado el:</strong> <span id="detalleFecha"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Confirmar eliminación de curso -->
+<div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-labelledby="modalConfirmarEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="modalConfirmarEliminarLabel">⚠️ Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">¿Estás seguro de que deseas eliminar este curso? Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Sí, eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </main>
 
 <!-- SECCIÓN CONTACTO (sin cambios) -->
@@ -507,12 +548,26 @@ footer {
                 <a href="https://www.instagram.com/" target="_blank" class="btn btn-danger btn-red">Instagram</a>
             </div>
             <div class="col-md-7">
-                <form>
-                    <input type="text" class="form-control" placeholder="Tu nombre completo" required>
-                    <input type="email" class="form-control" placeholder="Tu correo electrónico" required>
-                    <input type="text" class="form-control" placeholder="Asunto">
-                    <textarea class="form-control" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
-                    <button type="submit" class="btn btn-contacto mt-2">Enviar mensaje</button>
+                <form class="row g-3">
+                    <div class="col-12">
+                        <label for="contactoNombre" class="form-label">Nombre completo</label>
+                        <input type="text" class="form-control" id="contactoNombre" placeholder="Tu nombre completo" required>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label for="contactoCorreo" class="form-label">Correo electrónico</label>
+                        <input type="email" class="form-control" id="contactoCorreo" placeholder="Tu correo electrónico" required>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label for="contactoAsunto" class="form-label">Asunto</label>
+                        <input type="text" class="form-control" id="contactoAsunto" placeholder="Asunto">
+                    </div>
+                    <div class="col-12">
+                        <label for="contactoMensaje" class="form-label">Mensaje</label>
+                        <textarea class="form-control" id="contactoMensaje" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary fw-bold mt-2">Enviar mensaje</button>
+                    </div>
                 </form>
             </div>
         </div>

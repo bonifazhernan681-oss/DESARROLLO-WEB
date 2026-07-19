@@ -19,6 +19,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const alertaExito = document.getElementById('alertaExito');
     const alertaError = document.getElementById('alertaError');
 
+    // Elementos para el spinner de carga (Semana 8 - Bootstrap)
+    const btnRegistrarCurso = document.getElementById('btnRegistrarCurso');
+    const spinnerRegistrar = document.getElementById('spinnerRegistrar');
+    const textoBtnRegistrar = document.getElementById('textoBtnRegistrar');
+
+    // Modales Bootstrap (Semana 8)
+    const modalDetalle = new bootstrap.Modal(document.getElementById('modalDetalleCurso'));
+    const modalEliminar = new bootstrap.Modal(document.getElementById('modalConfirmarEliminar'));
+    const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
+    let idCursoAEliminar = null;
+
     const LONGITUD_MIN_NOMBRE = 5;
     const LONGITUD_MIN_DESCRIPCION = 15;
 
@@ -105,19 +116,30 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const nuevoCurso = {
-            id: Date.now(),
-            nombre: inputNombre.value.trim(),
-            descripcion: inputDescripcion.value.trim(),
-            categoria: selectCategoria.value
-        };
-        cursos.push(nuevoCurso);
+        // Simula un proceso de guardado (spinner Bootstrap) antes de registrar
+        btnRegistrarCurso.disabled = true;
+        spinnerRegistrar.classList.remove('d-none');
+        textoBtnRegistrar.textContent = 'Registrando...';
 
-        renderRegistros();
+        setTimeout(function () {
+            const nuevoCurso = {
+                id: Date.now(),
+                nombre: inputNombre.value.trim(),
+                descripcion: inputDescripcion.value.trim(),
+                categoria: selectCategoria.value
+            };
+            cursos.push(nuevoCurso);
 
-        formulario.reset();
-        limpiarEstadosVisuales();
-        mostrarMensajeExito();
+            renderRegistros();
+
+            formulario.reset();
+            limpiarEstadosVisuales();
+            mostrarMensajeExito();
+
+            btnRegistrarCurso.disabled = false;
+            spinnerRegistrar.classList.add('d-none');
+            textoBtnRegistrar.textContent = '➕ Registrar Curso';
+        }, 1000);
     });
 
     // Recorre el arreglo de cursos y arma las tarjetas en pantalla
@@ -154,16 +176,25 @@ document.addEventListener('DOMContentLoaded', function () {
             parrafo.classList.add('card-text', 'text-muted', 'small');
             parrafo.textContent = curso.descripcion;
 
+            const btnVerDetalle = document.createElement('button');
+            btnVerDetalle.classList.add('btn', 'btn-outline-primary', 'btn-sm', 'mt-2', 'me-2');
+            btnVerDetalle.textContent = '👁️ Ver detalles';
+            btnVerDetalle.addEventListener('click', function () {
+                mostrarDetalleCurso(curso);
+            });
+
             const btnEliminar = document.createElement('button');
             btnEliminar.classList.add('btn', 'btn-danger', 'btn-sm', 'mt-2');
             btnEliminar.textContent = '🗑️ Eliminar';
             btnEliminar.addEventListener('click', function () {
-                eliminarRegistro(curso.id);
+                idCursoAEliminar = curso.id;
+                modalEliminar.show();
             });
 
             cardBody.appendChild(badge);
             cardBody.appendChild(titulo);
             cardBody.appendChild(parrafo);
+            cardBody.appendChild(btnVerDetalle);
             cardBody.appendChild(btnEliminar);
             card.appendChild(cardBody);
             divRegistro.appendChild(card);
@@ -173,6 +204,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
         actualizarContador();
     }
+
+    // Llena y muestra el modal con la información completa del curso (Semana 8)
+    function mostrarDetalleCurso(curso) {
+        document.getElementById('detalleNombre').textContent = curso.nombre;
+        document.getElementById('detalleDescripcion').textContent = curso.descripcion;
+        document.getElementById('detalleCategoria').textContent = curso.categoria;
+        document.getElementById('detalleFecha').textContent = new Date(curso.id).toLocaleString('es-EC');
+        modalDetalle.show();
+    }
+
+    // Confirma la eliminación desde el modal (Semana 8)
+    btnConfirmarEliminar.addEventListener('click', function () {
+        if (idCursoAEliminar !== null) {
+            eliminarRegistro(idCursoAEliminar);
+            idCursoAEliminar = null;
+        }
+        modalEliminar.hide();
+    });
 
     function eliminarRegistro(id) {
         cursos = cursos.filter(function (curso) {
