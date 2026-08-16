@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Desarrollo Web - Instructores{% endblock %}
+
+{% block content %}
+<div class="modulo-header">
+    <h1>👨‍🏫 Módulo de Instructores</h1>
+    <p>Instructores que dictan los cursos de la plataforma (datos de ejemplo)</p>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        {% for instructor in instructores %}
+        <div class="col-md-4">
+            <div class="card h-100 p-3 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">{{ instructor.nombre }}</h5>
+                    <p class="card-text text-muted mb-1">Especialidad: {{ instructor.especialidad }}</p>
+                    <p class="card-text text-muted">Correo: {{ instructor.correo }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

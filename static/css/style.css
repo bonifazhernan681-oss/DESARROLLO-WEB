@@ -1,0 +1,265 @@
+/* ============================================================
+   style.css
+   Estilos generales del proyecto "Desarrollo Web"
+   Extraídos del <style> embebido en index.html (semanas 1-8)
+   para organizarlos dentro de la carpeta static/ (Semana 9 - Flask)
+   ============================================================ */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+header {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+}
+
+header p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+.navbar {
+    background-color: #0d6efd;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.navbar-brand, .nav-link {
+    color: white !important;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: #cce5ff !important;
+}
+
+section {
+    padding: 60px 0;
+}
+
+section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 20px;
+    border-left: 5px solid #0dcaf0;
+    padding-left: 12px;
+}
+
+#inicio {
+    background-color: #ffffff;
+}
+
+#inicio p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+#quienes-somos {
+    background-color: #eaf4ff;
+}
+
+#quienes-somos img {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+#servicios {
+    background-color: #ffffff;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-title {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+#video {
+    background-color: #eaf4ff;
+    text-align: center;
+}
+
+#video iframe {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    max-width: 100%;
+}
+
+aside {
+    background-color: #fff3cd;
+    border-left: 5px solid #ffc107;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin: 40px 0;
+}
+
+aside h3 {
+    color: #856404;
+    font-weight: 700;
+}
+
+#contacto {
+    background-color: #ffffff;
+}
+
+#contacto .form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    margin-bottom: 15px;
+}
+
+#contacto .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13,110,253,0.3);
+}
+
+.btn-contacto {
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 30px;
+    font-weight: 600;
+    border: none;
+}
+
+.btn-contacto:hover {
+    background-color: #0b5ed7;
+}
+
+.btn-red {
+    border-radius: 20px;
+    font-weight: 500;
+    margin: 5px;
+    padding: 8px 20px;
+}
+
+/* Estilos sección dinámica - Semana 5 */
+#registrar-curso {
+    background-color: #f0f7ff;
+}
+
+#registrar-curso .form-label {
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+#registrar-curso .form-control,
+#registrar-curso .form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+}
+
+#registrar-curso .form-control:focus,
+#registrar-curso .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13,110,253,0.3);
+}
+
+.mensaje-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    display: none;
+    margin-top: 4px;
+}
+
+#alertaExito {
+    display: none;
+}
+
+#seccionRegistros {
+    display: none;
+    margin-top: 40px;
+}
+
+.contador-badge {
+    background-color: #0d6efd;
+    color: white;
+    font-size: 1rem;
+    padding: 8px 20px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.registro-item .card {
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
+
+.registro-item .card:hover {
+    transform: translateY(-4px);
+}
+
+footer {
+    background-color: #0d6efd;
+    color: white;
+    text-align: center;
+    padding: 25px 10px;
+    font-size: 0.95rem;
+}
+
+/* ============================================================
+   Estilos nuevos - Semana 9 (módulos Flask: productos, clientes,
+   proveedores, facturación)
+   ============================================================ */
+
+.modulo-header {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.modulo-header h1 {
+    font-weight: 700;
+}
+
+.tabla-modulo thead {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.badge-estado {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+@media (max-width: 576px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    header p {
+        font-size: 1rem;
+    }
+    section h2 {
+        font-size: 1.5rem;
+    }
+    #video iframe {
+        width: 100%;
+        height: 220px;
+    }
+}

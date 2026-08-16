@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Desarrollo Web - Estudiantes{% endblock %}
+
+{% block content %}
+<div class="modulo-header">
+    <h1>🧑‍🎓 Módulo de Estudiantes</h1>
+    <p>Estudiantes registrados en la plataforma (datos de ejemplo)</p>
+</div>
+
+<div class="container pb-5">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle tabla-modulo">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Curso inscrito</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for estudiante in estudiantes %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ estudiante.nombre }}</td>
+                    <td>{{ estudiante.correo }}</td>
+                    <td>{{ estudiante.curso }}</td>
+                    <td>
+                        {% if estudiante.estado == 'Activo' %}
+                        <span class="badge bg-success badge-estado">{{ estudiante.estado }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary badge-estado">{{ estudiante.estado }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

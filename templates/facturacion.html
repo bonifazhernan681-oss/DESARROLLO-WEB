@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Desarrollo Web - Pagos{% endblock %}
+
+{% block content %}
+<div class="modulo-header">
+    <h1>🧾 Módulo de Facturación</h1>
+    <p>Pagos y matrículas registrados en la plataforma (datos de ejemplo)</p>
+</div>
+
+<div class="container pb-5">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle tabla-modulo">
+            <thead>
+                <tr>
+                    <th>N° Factura</th>
+                    <th>Estudiante</th>
+                    <th>Curso</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pago in pagos %}
+                <tr>
+                    <td>{{ pago.numero }}</td>
+                    <td>{{ pago.estudiante }}</td>
+                    <td>{{ pago.curso }}</td>
+                    <td>{{ pago.monto }}</td>
+                    <td>{{ pago.fecha }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

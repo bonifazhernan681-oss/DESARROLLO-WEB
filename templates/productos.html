@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Desarrollo Web - Cursos{% endblock %}
+
+{% block content %}
+<div class="modulo-header">
+    <h1>📘 Módulo de Cursos</h1>
+    <p>Catálogo de cursos disponibles en la plataforma (datos de ejemplo)</p>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        {% for curso in cursos %}
+        <div class="col-md-4">
+            <div class="card h-100 p-3">
+                <div class="card-body">
+                    <span class="badge bg-primary badge-estado mb-2">{{ curso.categoria }}</span>
+                    <h5 class="card-title">{{ curso.nombre }}</h5>
+                    <p class="card-text text-muted">{{ curso.descripcion }}</p>
+                    <p class="fw-bold text-primary mb-0">{{ curso.precio }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
