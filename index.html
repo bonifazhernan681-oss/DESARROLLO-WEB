@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desarrollo Web</title>
+<!-- Bootstrap CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- CSS3 personalizado -->
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+header {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+}
+
+header p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+.navbar {
+    background-color: #0d6efd;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.navbar-brand, .nav-link {
+    color: white !important;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: #cce5ff !important;
+}
+
+section {
+    padding: 60px 0;
+}
+
+section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 20px;
+    border-left: 5px solid #0dcaf0;
+    padding-left: 12px;
+}
+
+#inicio {
+    background-color: #ffffff;
+}
+
+#inicio p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+#quienes-somos {
+    background-color: #eaf4ff;
+}
+
+#quienes-somos img {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+#servicios {
+    background-color: #ffffff;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-title {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+#video {
+    background-color: #eaf4ff;
+    text-align: center;
+}
+
+#video iframe {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    max-width: 100%;
+}
+
+aside {
+    background-color: #fff3cd;
+    border-left: 5px solid #ffc107;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin: 40px 0;
+}
+
+aside h3 {
+    color: #856404;
+    font-weight: 700;
+}
+
+#contacto {
+    background-color: #ffffff;
+}
+
+#contacto .form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    margin-bottom: 15px;
+}
+
+#contacto .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13,110,253,0.3);
+}
+
+.btn-contacto {
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 30px;
+    font-weight: 600;
+    border: none;
+}
+
+.btn-contacto:hover {
+    background-color: #0b5ed7;
+}
+
+.btn-red {
+    border-radius: 20px;
+    font-weight: 500;
+    margin: 5px;
+    padding: 8px 20px;
+}
+
+/* Estilos sección dinámica - Semana 5 */
+#registrar-curso {
+    background-color: #f0f7ff;
+}
+
+#registrar-curso .form-label {
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+#registrar-curso .form-control,
+#registrar-curso .form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+}
+
+#registrar-curso .form-control:focus,
+#registrar-curso .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13,110,253,0.3);
+}
+
+.mensaje-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    display: none;
+    margin-top: 4px;
+}
+
+#alertaExito {
+    display: none;
+}
+
+#seccionRegistros {
+    display: none;
+    margin-top: 40px;
+}
+
+.contador-badge {
+    background-color: #0d6efd;
+    color: white;
+    font-size: 1rem;
+    padding: 8px 20px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.registro-item .card {
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
+
+.registro-item .card:hover {
+    transform: translateY(-4px);
+}
+
+footer {
+    background-color: #0d6efd;
+    color: white;
+    text-align: center;
+    padding: 25px 10px;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 576px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    header p {
+        font-size: 1rem;
+    }
+    section h2 {
+        font-size: 1.5rem;
+    }
+    #video iframe {
+        width: 100%;
+        height: 220px;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Encabezado: en la futura plantilla Flask sería parte de base.html -->
+<header>
+    <h1>Desarrollo Web</h1>
+    <p>Plataforma para el aprendizaje y desarrollo de aplicaciones web modernas</p>
+</header>
+
+<!-- Menú de navegación: también reutilizable en base.html -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">Desarrollo Web</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNav">
+            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="menuNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="#quienes-somos">Quiénes Somos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#registrar-curso">Registrar Curso</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenido principal: este bloque cambiaría por sección (content) en cada plantilla -->
+<main>
+
+<!-- SECCIÓN INICIO (sin cambios) -->
+<section id="inicio">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2>Inicio</h2>
+                <p>
+                    Bienvenido a <strong>Desarrollo Web</strong>, tu plataforma de referencia para aprender
+                    y dominar el desarrollo de aplicaciones web modernas. Aquí encontrarás recursos,
+                    guías y proyectos prácticos diseñados para llevarte desde los fundamentos hasta
+                    niveles avanzados de programación web.
+                </p>
+                <a href="#quienes-somos" class="btn btn-primary btn-lg mt-2">Conócenos</a>
+                <a href="#servicios" class="btn btn-outline-primary btn-lg mt-2 ms-2">Ver Servicios</a>
+            </div>
+            <div class="col-md-4 text-center mt-4 mt-md-0">
+                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400"
+                     alt="Programación web" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECCIÓN QUIÉNES SOMOS (sin cambios) -->
+<section id="quienes-somos">
+    <div class="container">
+        <h2>Quiénes Somos</h2>
+        <article>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p>
+                        Somos un equipo comprometido con la educación tecnológica y el desarrollo de
+                        habilidades digitales en estudiantes y profesionales de toda América Latina.
+                        Nuestra plataforma nació con la visión de hacer accesible el aprendizaje del
+                        desarrollo web a cualquier persona con ganas de aprender, sin importar su nivel
+                        de experiencia previo.
+                    </p>
+                    <p>
+                        Creemos que la programación web es una herramienta fundamental en el mundo actual,
+                        y por eso ofrecemos contenidos actualizados, proyectos integradores y acompañamiento
+                        personalizado. Nuestros módulos cubren desde HTML5 y CSS3 hasta JavaScript, bases
+                        de datos y despliegue en la nube. Trabajamos con metodologías activas que permiten
+                        al estudiante aprender haciendo, aplicando cada concepto en proyectos reales que
+                        fortalecen su portafolio profesional y aumentan sus oportunidades laborales en el
+                        sector tecnológico.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center mt-4 mt-md-0">
+                    <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600"
+                         alt="Desarrollo de aplicaciones web" class="img-fluid">
+                </div>
+            </div>
+        </article>
+        <aside>
+            <h3>Información adicional</h3>
+            <p><strong>Horarios de atención:</strong> Lunes a viernes, 08:00 – 18:00</p>
+            <p><strong>Próximo taller:</strong> Introducción a JavaScript – 20 de junio de 2026</p>
+            <p><strong>Promoción:</strong> Acceso gratuito al módulo de HTML5 durante este mes.</p>
+        </aside>
+    </div>
+</section>
+
+<!-- SECCIÓN SERVICIOS (sin cambios) -->
+<section id="servicios">
+    <div class="container">
+        <h2>Servicios</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">📘 Cursos desde cero</h5>
+                        <p class="card-text">Aprende HTML5, CSS3 y JavaScript desde los fundamentos con ejemplos prácticos y proyectos reales.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">🛠️ Proyectos integradores</h5>
+                        <p class="card-text">Desarrolla proyectos completos con retroalimentación personalizada para fortalecer tu portafolio.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">🐙 Git y GitHub</h5>
+                        <p class="card-text">Domina el control de versiones con talleres prácticos de Git y GitHub para trabajo colaborativo.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">🗄️ Bases de datos</h5>
+                        <p class="card-text">Módulos de bases de datos relacionales y no relacionales aplicadas al desarrollo web moderno.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">☁️ Despliegue en la nube</h5>
+                        <p class="card-text">Aprende a publicar y escalar tus aplicaciones web usando servicios en la nube modernos.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">🏆 Certificados digitales</h5>
+                        <p class="card-text">Obtén certificados digitales al completar cada módulo y valida tus conocimientos ante empleadores.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECCIÓN VIDEO (sin cambios) -->
+<section id="video">
+    <div class="container">
+        <h2 class="text-center">Video relacionado</h2>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <iframe width="100%" height="380"
+                        src="https://www.youtube.com/embed/rr2H086z16s"
+                        title="Curso HTML5 en español"
+                        allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECCIÓN DINÁMICA - contenido que se renderiza con JavaScript -->
+<section id="registrar-curso">
+    <div class="container">
+        <h2>Registrar Curso</h2>
+        <p class="text-muted mb-4">Completa el formulario para registrar un nuevo curso en la plataforma.</p>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card p-4 shadow-sm">
+                    <div class="card-body">
+
+                        <div id="alertaExito" class="alert alert-success" role="alert">
+                            ✅ ¡Curso registrado exitosamente!
+                        </div>
+
+                        <div id="alertaError" class="alert alert-danger" role="alert" style="display:none;">
+                            ⚠️ Revisa los campos marcados antes de registrar el curso.
+                        </div>
+
+                        <form id="formCurso" novalidate>
+                            <div class="mb-3">
+                                <label for="nombreCurso" class="form-label">Nombre del curso</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="nombreCurso"
+                                    placeholder="Ej: Introducción a HTML5">
+                                <div class="mensaje-error" id="errorNombre"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="descripcionCurso" class="form-label">Descripción</label>
+                                <textarea
+                                    class="form-control"
+                                    id="descripcionCurso"
+                                    rows="3"
+                                    placeholder="Describe brevemente el contenido del curso..."></textarea>
+                                <div class="mensaje-error" id="errorDescripcion"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="categoriaCurso" class="form-label">Categoría</label>
+                                <select class="form-select" id="categoriaCurso">
+                                    <option value="">-- Selecciona una categoría --</option>
+                                    <option value="Frontend">Frontend</option>
+                                    <option value="Backend">Backend</option>
+                                    <option value="Base de Datos">Base de Datos</option>
+                                    <option value="DevOps">DevOps</option>
+                                    <option value="Diseño Web">Diseño Web</option>
+                                </select>
+                                <div class="mensaje-error" id="errorCategoria"></div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary fw-bold" id="btnRegistrarCurso">
+                                    <span class="spinner-border spinner-border-sm me-2 d-none" id="spinnerRegistrar" role="status" aria-hidden="true"></span>
+                                    <span id="textoBtnRegistrar">➕ Registrar Curso</span>
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="seccionRegistros">
+            <hr class="my-4">
+            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                <h4 class="fw-bold text-primary mb-0">📋 Cursos Registrados</h4>
+                <span class="contador-badge">
+                    Total de registros: <span id="contadorRegistros">0</span>
+                </span>
+            </div>
+            <div class="row g-3" id="listaRegistros">
+                <!-- Los registros se agregan aquí dinámicamente con JavaScript -->
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Modal: Ver detalle del curso -->
+<div class="modal fade" id="modalDetalleCurso" tabindex="-1" aria-labelledby="modalDetalleCursoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="modalDetalleCursoLabel">📘 Detalle del curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Nombre:</strong> <span id="detalleNombre"></span></p>
+                <p><strong>Descripción:</strong> <span id="detalleDescripcion"></span></p>
+                <p><strong>Categoría:</strong> <span id="detalleCategoria"></span></p>
+                <p class="mb-0"><strong>Registrado el:</strong> <span id="detalleFecha"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Confirmar eliminación de curso -->
+<div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-labelledby="modalConfirmarEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="modalConfirmarEliminarLabel">⚠️ Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">¿Estás seguro de que deseas eliminar este curso? Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Sí, eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+<!-- SECCIÓN CONTACTO (sin cambios) -->
+<section id="contacto">
+    <div class="container">
+        <h2>Contacto</h2>
+        <div class="row g-4">
+            <div class="col-md-5">
+                <p><strong>Correo electrónico:</strong><br>
+                    <a href="mailto:dariobonifaz000@gmail.com">dariobonifaz000@gmail.com</a>
+                </p>
+                <p><strong>Teléfono:</strong><br>
+                    <a href="tel:+593983421964">0983421964</a>
+                </p>
+                <p><strong>Dirección:</strong><br>Guayaquil, Ecuador</p>
+                <p><strong>Redes sociales:</strong></p>
+                <a href="https://github.com/" target="_blank" class="btn btn-dark btn-red">GitHub</a>
+                <a href="https://www.linkedin.com/" target="_blank" class="btn btn-primary btn-red">LinkedIn</a>
+                <a href="https://www.instagram.com/" target="_blank" class="btn btn-danger btn-red">Instagram</a>
+            </div>
+            <div class="col-md-7">
+                <form class="row g-3">
+                    <div class="col-12">
+                        <label for="contactoNombre" class="form-label">Nombre completo</label>
+                        <input type="text" class="form-control" id="contactoNombre" placeholder="Tu nombre completo" required>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label for="contactoCorreo" class="form-label">Correo electrónico</label>
+                        <input type="email" class="form-control" id="contactoCorreo" placeholder="Tu correo electrónico" required>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label for="contactoAsunto" class="form-label">Asunto</label>
+                        <input type="text" class="form-control" id="contactoAsunto" placeholder="Asunto">
+                    </div>
+                    <div class="col-12">
+                        <label for="contactoMensaje" class="form-label">Mensaje</label>
+                        <textarea class="form-control" id="contactoMensaje" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary fw-bold mt-2">Enviar mensaje</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pie de página: reutilizable en base.html -->
+<footer>
+    <p>Desarrollado por Hernan Bonifaz | Asignatura: Desarrollo de Aplicaciones Web | Año: 2026</p>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
