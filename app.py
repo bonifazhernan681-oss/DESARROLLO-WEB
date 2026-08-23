@@ -1,12 +1,14 @@
 """
 app.py
-Proyecto Integrador U3 - Avance 9/16
-Configuración de un proyecto web con Flask y manejo de rutas.
+Proyecto Integrador U3 - Avance 10/16
+Generación de contenido dinámico con Jinja2 y reutilización de componentes.
 
-Este archivo convierte la página estática desarrollada en semanas
-anteriores en una aplicación Flask, con rutas para cada módulo del
-sistema. En esta etapa no se usa base de datos: los datos que se
-muestran en cada módulo son de ejemplo (listas de Python).
+Este archivo continúa la aplicación Flask desarrollada en la Semana 9,
+incorporando datos dinámicos enviados hacia las plantillas mediante
+render_template(), estructuras repetitivas y condicionales en Jinja2,
+y componentes reutilizables (navbar y footer). En esta etapa no se usa
+base de datos: los datos que se muestran en cada módulo son de ejemplo
+(listas y diccionarios de Python).
 """
 
 from flask import Flask, render_template
@@ -32,40 +34,50 @@ def productos():
             'nombre': 'Introducción a HTML5',
             'descripcion': 'Fundamentos de estructura y semántica web.',
             'categoria': 'Frontend',
-            'precio': '$25.00'
+            'precio': '$25.00',
+            'cupos': 12
         },
         {
             'nombre': 'CSS3 y diseño responsive',
             'descripcion': 'Estilos, Flexbox, Grid y adaptabilidad a dispositivos.',
             'categoria': 'Frontend',
-            'precio': '$30.00'
+            'precio': '$30.00',
+            'cupos': 0
         },
         {
             'nombre': 'JavaScript desde cero',
             'descripcion': 'Lógica de programación aplicada al navegador.',
             'categoria': 'Frontend',
-            'precio': '$35.00'
+            'precio': '$35.00',
+            'cupos': 8
         },
         {
             'nombre': 'Python con Flask',
             'descripcion': 'Desarrollo de aplicaciones web con Python.',
             'categoria': 'Backend',
-            'precio': '$40.00'
+            'precio': '$40.00',
+            'cupos': 5
         },
         {
             'nombre': 'Bases de datos relacionales',
             'descripcion': 'Modelado ER, SQL y administración de datos.',
             'categoria': 'Base de Datos',
-            'precio': '$35.00'
+            'precio': '$35.00',
+            'cupos': 0
         },
         {
             'nombre': 'Despliegue en la nube',
             'descripcion': 'Publicación y escalado de aplicaciones web.',
             'categoria': 'DevOps',
-            'precio': '$45.00'
+            'precio': '$45.00',
+            'cupos': 10
         },
     ]
-    return render_template('productos.html', cursos=cursos)
+
+    # Variable simple enviada desde Flask hacia la plantilla
+    total_cursos = len(cursos)
+
+    return render_template('productos.html', cursos=cursos, total_cursos=total_cursos)
 
 
 # ------------------- MÓDULO CLIENTES (Estudiantes) -------------------
