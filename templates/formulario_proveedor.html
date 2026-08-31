@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Desarrollo Web - Nuevo instructor{% endblock %}
+
+{% block content %}
+<div class="modulo-header">
+    <h1>👨‍🏫 Registro de Instructor</h1>
+    <p>Complete el formulario para registrar un nuevo instructor</p>
+</div>
+
+<div class="container pb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <form method="POST" action="{{ url_for('nuevo_proveedor') }}" novalidate>
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    {{ form.nombre.label(class="form-label") }}
+                    {{ form.nombre(class="form-control" + (" is-invalid" if form.nombre.errors else "")) }}
+                    {% for error in form.nombre.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.especialidad.label(class="form-label") }}
+                    {{ form.especialidad(class="form-control" + (" is-invalid" if form.especialidad.errors else "")) }}
+                    {% for error in form.especialidad.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.correo.label(class="form-label") }}
+                    {{ form.correo(class="form-control" + (" is-invalid" if form.correo.errors else "")) }}
+                    {% for error in form.correo.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex gap-2">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <a href="{{ url_for('proveedores') }}" class="btn btn-outline-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
