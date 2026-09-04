@@ -1,15 +1,18 @@
 """
 app.py
-Proyecto Integrador U3 - Avance 11/16
-Validación de formularios con Flask-WTF y WTForms.
+Proyecto Integrador U3 - Avance 12/16
+Persistencia de datos en un entorno local con SQLite.
 
-Este archivo continúa la aplicación Flask desarrollada en la Semana 10,
-incorporando formularios web con validación del lado del servidor mediante
-Flask-WTF y WTForms, protección CSRF, y rutas GET/POST para el registro de
-información en cada módulo. En esta etapa no se usa base de datos: los
-datos siguen siendo de ejemplo (listas y diccionarios de Python) y los
-formularios únicamente demuestran el proceso de validación.
+Este archivo continúa la aplicación Flask desarrollada en la Semana 11,
+incorporando persistencia local con SQLite para el módulo de Cursos
+(Productos). El flujo implementado es: Formulario -> Validación (Flask-WTF)
+-> INSERT -> SELECT -> Tabla HTML (Jinja2). Los módulos de Estudiantes,
+Instructores y Pagos se conservan con datos de ejemplo y quedan preparados
+para incorporar persistencia progresivamente.
 """
+
+import os
+import sqlite3
 
 from flask import Flask, render_template, redirect, url_for, flash
 
@@ -24,6 +27,49 @@ app = Flask(__name__)
 # En un entorno real, este valor debería cargarse desde una variable de entorno.
 app.config['SECRET_KEY'] = 'clave-secreta-proyecto-integrador-2026'
 
+# ------------------- CONFIGURACIÓN DE LA BASE DE DATOS -------------------
+
+# Ruta local de la base de datos SQLite dentro de la carpeta data/
+DB_PATH = os.path.join('data', 'ferreteria.db')
+
+
+def get_db_connection():
+    """Crea y devuelve una conexión a la base de datos SQLite.
+
+    row_factory = sqlite3.Row permite acceder a las columnas por nombre
+    (por ejemplo curso['nombre'] o curso.nombre en las plantillas Jinja2).
+    """
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_db():
+    """Crea la carpeta data/ y la tabla 'cursos' si aún no existen.
+
+    Se usa CREATE TABLE IF NOT EXISTS para que la aplicación pueda
+    reiniciarse cuantas veces sea necesario sin generar errores ni
+    perder los datos ya almacenados.
+    """
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    conn = get_db_connection()
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS cursos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            descripcion TEXT NOT NULL,
+            categoria TEXT NOT NULL,
+            precio REAL NOT NULL,
+            cupos INTEGER NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+
+# Se inicializa la base de datos al arrancar la aplicación.
+init_db()
+
 
 # ------------------- RUTA PRINCIPAL -------------------
 
@@ -33,57 +79,17 @@ def inicio():
     return render_template('index.html')
 
 
-# ------------------- MÓDULO PRODUCTOS (Cursos) -------------------
+# ------------------- MÓDULO PRODUCTOS (Cursos) - CON PERSISTENCIA -------------------
 
 @app.route('/productos')
 def productos():
-    """Muestra el catálogo de cursos disponibles (datos de ejemplo)."""
-    cursos = [
-        {
-            'nombre': 'Introducción a HTML5',
-            'descripcion': 'Fundamentos de estructura y semántica web.',
-            'categoria': 'Frontend',
-            'precio': '$25.00',
-            'cupos': 12
-        },
-        {
-            'nombre': 'CSS3 y diseño responsive',
-            'descripcion': 'Estilos, Flexbox, Grid y adaptabilidad a dispositivos.',
-            'categoria': 'Frontend',
-            'precio': '$30.00',
-            'cupos': 0
-        },
-        {
-            'nombre': 'JavaScript desde cero',
-            'descripcion': 'Lógica de programación aplicada al navegador.',
-            'categoria': 'Frontend',
-            'precio': '$35.00',
-            'cupos': 8
-        },
-        {
-            'nombre': 'Python con Flask',
-            'descripcion': 'Desarrollo de aplicaciones web con Python.',
-            'categoria': 'Backend',
-            'precio': '$40.00',
-            'cupos': 5
-        },
-        {
-            'nombre': 'Bases de datos relacionales',
-            'descripcion': 'Modelado ER, SQL y administración de datos.',
-            'categoria': 'Base de Datos',
-            'precio': '$35.00',
-            'cupos': 0
-        },
-        {
-            'nombre': 'Despliegue en la nube',
-            'descripcion': 'Publicación y escalado de aplicaciones web.',
-            'categoria': 'DevOps',
-            'precio': '$45.00',
-            'cupos': 10
-        },
-    ]
+    """Muestra el catálogo de cursos recuperado desde SQLite."""
+    conn = get_db_connection()
+    cursos = conn.execute(
+        'SELECT id, nombre, descripcion, categoria, precio, cupos FROM cursos ORDER BY id DESC'
+    ).fetchall()
+    conn.close()
 
-    # Variable simple enviada desde Flask hacia la plantilla
     total_cursos = len(cursos)
 
     return render_template('productos.html', cursos=cursos, total_cursos=total_cursos)
@@ -91,13 +97,20 @@ def productos():
 
 @app.route('/productos/nuevo', methods=['GET', 'POST'])
 def nuevo_producto():
-    """Formulario de registro/edición de un curso, validado con Flask-WTF."""
+    """Formulario de registro de un curso, validado con Flask-WTF y
+    almacenado de forma persistente en SQLite."""
     form = CursoForm()
 
     if form.validate_on_submit():
-        # Todas las validaciones fueron satisfactorias.
-        # La persistencia con MySQL/PostgreSQL se incorporará en avances posteriores;
-        # por ahora solo se confirma el registro mediante un mensaje flash.
+        conn = get_db_connection()
+        conn.execute(
+            'INSERT INTO cursos (nombre, descripcion, categoria, precio, cupos) VALUES (?, ?, ?, ?, ?)',
+            (form.nombre.data, form.descripcion.data, form.categoria.data,
+             form.precio.data, form.cupos.data)
+        )
+        conn.commit()
+        conn.close()
+
         flash(f'Curso "{form.nombre.data}" registrado correctamente.', 'success')
         return redirect(url_for('productos'))
 

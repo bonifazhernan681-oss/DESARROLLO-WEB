@@ -5,7 +5,7 @@
 {% block content %}
 <div class="modulo-header">
     <h1>📘 Módulo de Cursos</h1>
-    <p>Catálogo de cursos disponibles en la plataforma (datos de ejemplo)</p>
+    <p>Catálogo de cursos disponibles en la plataforma (persistidos en SQLite)</p>
     <p class="fw-bold">Total de cursos: {{ total_cursos }}</p>
     <a href="{{ url_for('nuevo_producto') }}" class="btn btn-primary">+ Nuevo curso</a>
 </div>
@@ -19,7 +19,7 @@
                     <span class="badge bg-primary badge-estado mb-2">{{ curso.categoria|upper }}</span>
                     <h5 class="card-title">{{ curso.nombre }}</h5>
                     <p class="card-text text-muted">{{ curso.descripcion }}</p>
-                    <p class="fw-bold text-primary mb-1">{{ curso.precio }}</p>
+                    <p class="fw-bold text-primary mb-1">${{ "%.2f"|format(curso.precio) }}</p>
 
                     {% if curso.cupos > 0 %}
                     <span class="badge bg-success">Disponible ({{ curso.cupos }} cupos)</span>
@@ -29,6 +29,8 @@
                 </div>
             </div>
         </div>
+        {% else %}
+        <p class="text-muted">Aún no hay cursos registrados. Usa el botón "+ Nuevo curso" para agregar el primero.</p>
         {% endfor %}
     </div>
 </div>
