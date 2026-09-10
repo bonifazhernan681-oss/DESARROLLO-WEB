@@ -5,7 +5,7 @@
 {% block content %}
 <div class="modulo-header">
     <h1>📘 Módulo de Cursos</h1>
-    <p>Catálogo de cursos disponibles en la plataforma (persistidos en SQLite)</p>
+    <p>Catálogo de cursos disponibles en la plataforma (persistidos en MySQL)</p>
     <p class="fw-bold">Total de cursos: {{ total_cursos }}</p>
     <a href="{{ url_for('nuevo_producto') }}" class="btn btn-primary">+ Nuevo curso</a>
 </div>
@@ -19,13 +19,25 @@
                     <span class="badge bg-primary badge-estado mb-2">{{ curso.categoria|upper }}</span>
                     <h5 class="card-title">{{ curso.nombre }}</h5>
                     <p class="card-text text-muted">{{ curso.descripcion }}</p>
+                    <p class="small text-secondary mb-1">Instructor: {{ curso.instructor }}</p>
                     <p class="fw-bold text-primary mb-1">${{ "%.2f"|format(curso.precio) }}</p>
 
                     {% if curso.cupos > 0 %}
-                    <span class="badge bg-success">Disponible ({{ curso.cupos }} cupos)</span>
+                    <span class="badge bg-success mb-3">Disponible ({{ curso.cupos }} cupos)</span>
                     {% else %}
-                    <span class="badge bg-danger">Agotado</span>
+                    <span class="badge bg-danger mb-3">Agotado</span>
                     {% endif %}
+
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('editar_producto', id_curso=curso.id_curso) }}"
+                           class="btn btn-sm btn-outline-primary">Modificar</a>
+
+                        <form method="POST"
+                              action="{{ url_for('eliminar_producto', id_curso=curso.id_curso) }}"
+                              onsubmit="return confirm('¿Eliminar el curso {{ curso.nombre }}? Esta acción no se puede deshacer.');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

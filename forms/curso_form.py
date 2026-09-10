@@ -1,6 +1,11 @@
 """
 forms/curso_form.py
 Formulario del módulo Productos (Cursos), basado en Flask-WTF y WTForms.
+
+Semana 13: se agrega el campo id_instructor (SelectField) para poder
+registrar la relación de clave foránea cursos.id_instructor ->
+instructores.id_instructor. Sus choices se cargan dinámicamente desde
+la base de datos en app.py antes de validar el formulario.
 """
 
 from flask_wtf import FlaskForm
@@ -44,6 +49,12 @@ class CursoForm(FlaskForm):
         'Cupos disponibles',
         validators=[DataRequired(message='El número de cupos es obligatorio.'),
                     NumberRange(min=0, message='Los cupos no pueden ser negativos.')]
+    )
+
+    id_instructor = SelectField(
+        'Instructor',
+        coerce=int,
+        validators=[DataRequired(message='Seleccione un instructor.')]
     )
 
     submit = SubmitField('Guardar curso')

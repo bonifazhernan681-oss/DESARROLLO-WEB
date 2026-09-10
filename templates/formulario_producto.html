@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Desarrollo Web - Nuevo curso{% endblock %}
+{% block title %}Desarrollo Web - {{ 'Editar curso' if modo == 'editar' else 'Nuevo curso' }}{% endblock %}
 
 {% block content %}
 <div class="modulo-header">
-    <h1>📘 Registro de Curso</h1>
-    <p>Complete el formulario para registrar un nuevo curso en el catálogo</p>
+    <h1>📘 {{ 'Modificar Curso' if modo == 'editar' else 'Registro de Curso' }}</h1>
+    <p>Complete el formulario para {{ 'actualizar el' if modo == 'editar' else 'registrar un nuevo' }} curso en el catálogo</p>
 </div>
 
 <div class="container pb-5">
     <div class="row justify-content-center">
         <div class="col-md-7">
-            <form method="POST" action="{{ url_for('nuevo_producto') }}" novalidate>
+            <form method="POST"
+                  action="{{ url_for('editar_producto', id_curso=id_curso) if modo == 'editar' else url_for('nuevo_producto') }}"
+                  novalidate>
                 {{ form.hidden_tag() }}
 
                 <div class="mb-3">
@@ -34,6 +36,14 @@
                     {{ form.categoria.label(class="form-label") }}
                     {{ form.categoria(class="form-select" + (" is-invalid" if form.categoria.errors else "")) }}
                     {% for error in form.categoria.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.id_instructor.label(class="form-label") }}
+                    {{ form.id_instructor(class="form-select" + (" is-invalid" if form.id_instructor.errors else "")) }}
+                    {% for error in form.id_instructor.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>

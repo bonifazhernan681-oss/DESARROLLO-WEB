@@ -1,20 +1,23 @@
 """
 app.py
-Proyecto Integrador U3 - Avance 12/16
-Persistencia de datos en un entorno local con SQLite.
+Proyecto Integrador U4 - Avance 13/16
+Uso de bases de datos relacionales: configuración, modelos y consultas básicas.
 
-Este archivo continúa la aplicación Flask desarrollada en la Semana 11,
-incorporando persistencia local con SQLite para el módulo de Cursos
-(Productos). El flujo implementado es: Formulario -> Validación (Flask-WTF)
--> INSERT -> SELECT -> Tabla HTML (Jinja2). Los módulos de Estudiantes,
-Instructores y Pagos se conservan con datos de ejemplo y quedan preparados
-para incorporar persistencia progresivamente.
+Este archivo continúa la aplicación Flask desarrollada en la Semana 12.
+El módulo de Productos (Cursos), que hasta la Semana 12 usaba SQLite,
+ahora trabaja directamente contra una base de datos relacional MySQL
+(plataforma_cursos), mediante conexion/conexion.py. Se implementan las
+cuatro operaciones completas: listar (SELECT con JOIN a instructores),
+agregar (INSERT), modificar (UPDATE) y eliminar (DELETE).
+
+Los módulos de Estudiantes, Instructores y Pagos se conservan con datos
+de ejemplo, tal como en la Semana 12, y quedan preparados para incorporar
+persistencia progresivamente.
 """
 
-import os
-import sqlite3
+from flask import Flask, render_template, redirect, url_for, flash, request
 
-from flask import Flask, render_template, redirect, url_for, flash
+from conexion.conexion import get_connection
 
 from forms.curso_form import CursoForm
 from forms.estudiante_form import EstudianteForm
@@ -27,49 +30,6 @@ app = Flask(__name__)
 # En un entorno real, este valor debería cargarse desde una variable de entorno.
 app.config['SECRET_KEY'] = 'clave-secreta-proyecto-integrador-2026'
 
-# ------------------- CONFIGURACIÓN DE LA BASE DE DATOS -------------------
-
-# Ruta local de la base de datos SQLite dentro de la carpeta data/
-DB_PATH = os.path.join('data', 'ferreteria.db')
-
-
-def get_db_connection():
-    """Crea y devuelve una conexión a la base de datos SQLite.
-
-    row_factory = sqlite3.Row permite acceder a las columnas por nombre
-    (por ejemplo curso['nombre'] o curso.nombre en las plantillas Jinja2).
-    """
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-def init_db():
-    """Crea la carpeta data/ y la tabla 'cursos' si aún no existen.
-
-    Se usa CREATE TABLE IF NOT EXISTS para que la aplicación pueda
-    reiniciarse cuantas veces sea necesario sin generar errores ni
-    perder los datos ya almacenados.
-    """
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    conn = get_db_connection()
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS cursos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            descripcion TEXT NOT NULL,
-            categoria TEXT NOT NULL,
-            precio REAL NOT NULL,
-            cupos INTEGER NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-
-# Se inicializa la base de datos al arrancar la aplicación.
-init_db()
-
 
 # ------------------- RUTA PRINCIPAL -------------------
 
@@ -79,15 +39,35 @@ def inicio():
     return render_template('index.html')
 
 
-# ------------------- MÓDULO PRODUCTOS (Cursos) - CON PERSISTENCIA -------------------
+# ------------------- MÓDULO PRODUCTOS (Cursos) - MYSQL -------------------
+
+def obtener_choices_instructores():
+    """Consulta los instructores en MySQL y arma la lista de choices
+    (id_instructor, nombre) para el SelectField del formulario de cursos."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id_instructor, nombre FROM instructores ORDER BY nombre')
+    instructores = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [(id_instructor, nombre) for (id_instructor, nombre) in instructores]
+
 
 @app.route('/productos')
 def productos():
-    """Muestra el catálogo de cursos recuperado desde SQLite."""
-    conn = get_db_connection()
-    cursos = conn.execute(
-        'SELECT id, nombre, descripcion, categoria, precio, cupos FROM cursos ORDER BY id DESC'
-    ).fetchall()
+    """Muestra el catálogo de cursos recuperado directamente desde MySQL,
+    incluyendo el nombre del instructor mediante un JOIN con instructores."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('''
+        SELECT c.id_curso, c.nombre, c.descripcion, c.categoria,
+               c.precio, c.cupos, c.id_instructor, i.nombre AS instructor
+        FROM cursos c
+        JOIN instructores i ON c.id_instructor = i.id_instructor
+        ORDER BY c.id_curso DESC
+    ''')
+    cursos = cursor.fetchall()
+    cursor.close()
     conn.close()
 
     total_cursos = len(cursos)
@@ -98,23 +78,81 @@ def productos():
 @app.route('/productos/nuevo', methods=['GET', 'POST'])
 def nuevo_producto():
     """Formulario de registro de un curso, validado con Flask-WTF y
-    almacenado de forma persistente en SQLite."""
+    almacenado mediante INSERT en MySQL."""
     form = CursoForm()
+    form.id_instructor.choices = obtener_choices_instructores()
 
     if form.validate_on_submit():
-        conn = get_db_connection()
-        conn.execute(
-            'INSERT INTO cursos (nombre, descripcion, categoria, precio, cupos) VALUES (?, ?, ?, ?, ?)',
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            '''INSERT INTO cursos (nombre, descripcion, categoria, precio, cupos, id_instructor)
+               VALUES (%s, %s, %s, %s, %s, %s)''',
             (form.nombre.data, form.descripcion.data, form.categoria.data,
-             form.precio.data, form.cupos.data)
+             form.precio.data, form.cupos.data, form.id_instructor.data)
         )
         conn.commit()
+        cursor.close()
         conn.close()
 
         flash(f'Curso "{form.nombre.data}" registrado correctamente.', 'success')
         return redirect(url_for('productos'))
 
-    return render_template('formulario_producto.html', form=form)
+    return render_template('formulario_producto.html', form=form, modo='nuevo')
+
+
+@app.route('/productos/editar/<int:id_curso>', methods=['GET', 'POST'])
+def editar_producto(id_curso):
+    """Recupera un curso por su identificador, permite editarlo con el mismo
+    formulario y guarda los cambios mediante UPDATE ... WHERE id_curso = %s."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM cursos WHERE id_curso = %s', (id_curso,))
+    curso = cursor.fetchone()
+    cursor.close()
+
+    if curso is None:
+        conn.close()
+        flash('El curso solicitado no existe.', 'danger')
+        return redirect(url_for('productos'))
+
+    # En GET se precargan los datos actuales del curso en el formulario.
+    form = CursoForm(data=curso) if request.method == 'GET' else CursoForm()
+    form.id_instructor.choices = obtener_choices_instructores()
+
+    if form.validate_on_submit():
+        cursor = conn.cursor()
+        cursor.execute(
+            '''UPDATE cursos
+               SET nombre = %s, descripcion = %s, categoria = %s,
+                   precio = %s, cupos = %s, id_instructor = %s
+               WHERE id_curso = %s''',
+            (form.nombre.data, form.descripcion.data, form.categoria.data,
+             form.precio.data, form.cupos.data, form.id_instructor.data, id_curso)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash(f'Curso "{form.nombre.data}" actualizado correctamente.', 'success')
+        return redirect(url_for('productos'))
+
+    conn.close()
+    return render_template('formulario_producto.html', form=form, modo='editar', id_curso=id_curso)
+
+
+@app.route('/productos/eliminar/<int:id_curso>', methods=['POST'])
+def eliminar_producto(id_curso):
+    """Elimina únicamente el curso seleccionado mediante DELETE ... WHERE id_curso = %s."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM cursos WHERE id_curso = %s', (id_curso,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash('Curso eliminado correctamente.', 'success')
+    return redirect(url_for('productos'))
 
 
 # ------------------- MÓDULO CLIENTES (Estudiantes) -------------------
