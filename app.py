@@ -1,21 +1,19 @@
 """
 app.py
-Proyecto Integrador U4 - Avance 13/16
-Uso de bases de datos relacionales: configuración, modelos y consultas básicas.
+Proyecto Integrador U4 - Avance 14/16
+Implementación de un sistema de login funcional.
 
-Este archivo continúa la aplicación Flask desarrollada en la Semana 12.
-El módulo de Productos (Cursos), que hasta la Semana 12 usaba SQLite,
-ahora trabaja directamente contra una base de datos relacional MySQL
-(plataforma_cursos), mediante conexion/conexion.py. Se implementan las
-cuatro operaciones completas: listar (SELECT con JOIN a instructores),
-agregar (INSERT), modificar (UPDATE) y eliminar (DELETE).
-
-Los módulos de Estudiantes, Instructores y Pagos se conservan con datos
-de ejemplo, tal como en la Semana 12, y quedan preparados para incorporar
-persistencia progresivamente.
+Este archivo continúa la aplicación Flask desarrollada en la Semana 13.
+Se incorpora un sistema de autenticación de usuarios con Flask-Login y
+Werkzeug: registro de usuarios, almacenamiento de contraseñas mediante
+hash, inicio de sesión, sesión activa, protección de rutas privadas y
+cierre de sesión. El módulo de Productos (Cursos) sigue trabajando
+contra MySQL (plataforma_cursos) sin cambios en su lógica CRUD.
 """
 
 from flask import Flask, render_template, redirect, url_for, flash, request
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from conexion.conexion import get_connection
 
@@ -23,20 +21,110 @@ from forms.curso_form import CursoForm
 from forms.estudiante_form import EstudianteForm
 from forms.instructor_form import InstructorForm
 from forms.pago_form import PagoForm
+from forms.usuario_form import RegistroForm, LoginForm
+
+from models import Usuario, obtener_usuario_por_id, obtener_usuario_por_nombre
 
 app = Flask(__name__)
 
-# Clave secreta necesaria para la protección CSRF de Flask-WTF.
+# Clave secreta necesaria para la protección CSRF de Flask-WTF y para
+# firmar la cookie de sesión que usa Flask-Login.
 # En un entorno real, este valor debería cargarse desde una variable de entorno.
 app.config['SECRET_KEY'] = 'clave-secreta-proyecto-integrador-2026'
+
+
+# ------------------- CONFIGURACIÓN DE FLASK-LOGIN -------------------
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+login_manager.login_message = 'Debe iniciar sesión para acceder a esta página.'
+login_manager.login_message_category = 'warning'
+
+
+@login_manager.user_loader
+def load_user(id_usuario):
+    """Flask-Login invoca esta función en cada request para recuperar,
+    a partir del id guardado en la sesión, el objeto Usuario autenticado."""
+    return obtener_usuario_por_id(id_usuario)
 
 
 # ------------------- RUTA PRINCIPAL -------------------
 
 @app.route('/')
 def inicio():
-    """Página principal informativa del proyecto (index.html)."""
+    """Página principal informativa del proyecto (index.html). Es pública,
+    no requiere sesión iniciada."""
     return render_template('index.html')
+
+
+# ------------------- MÓDULO DE AUTENTICACIÓN -------------------
+
+@app.route('/registro', methods=['GET', 'POST'])
+def registro():
+    """Registra un nuevo usuario en la tabla usuarios. La contraseña se
+    almacena protegida mediante generate_password_hash(), nunca en
+    texto plano."""
+    if current_user.is_authenticated:
+        return redirect(url_for('inicio'))
+
+    form = RegistroForm()
+
+    if form.validate_on_submit():
+        if obtener_usuario_por_nombre(form.usuario.data):
+            flash('Ese nombre de usuario ya está registrado.', 'danger')
+            return render_template('registro.html', form=form)
+
+        password_hash = generate_password_hash(form.password.data)
+
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            'INSERT INTO usuarios (usuario, password) VALUES (%s, %s)',
+            (form.usuario.data, password_hash)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash('Usuario registrado correctamente. Ya puede iniciar sesión.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('registro.html', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Valida las credenciales ingresadas contra la tabla usuarios y,
+    si son correctas, crea la sesión del usuario mediante login_user()."""
+    if current_user.is_authenticated:
+        return redirect(url_for('inicio'))
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        fila = obtener_usuario_por_nombre(form.usuario.data)
+
+        if fila and check_password_hash(fila['password'], form.password.data):
+            usuario_autenticado = Usuario(fila['id'], fila['usuario'])
+            login_user(usuario_autenticado)
+            flash(f'Bienvenido, {fila["usuario"]}.', 'success')
+
+            siguiente = request.args.get('next')
+            return redirect(siguiente or url_for('inicio'))
+
+        flash('Usuario o contraseña incorrectos.', 'danger')
+
+    return render_template('login.html', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    """Finaliza la sesión del usuario autenticado mediante logout_user()."""
+    logout_user()
+    flash('Sesión cerrada correctamente.', 'success')
+    return redirect(url_for('login'))
 
 
 # ------------------- MÓDULO PRODUCTOS (Cursos) - MYSQL -------------------
@@ -54,9 +142,11 @@ def obtener_choices_instructores():
 
 
 @app.route('/productos')
+@login_required
 def productos():
     """Muestra el catálogo de cursos recuperado directamente desde MySQL,
-    incluyendo el nombre del instructor mediante un JOIN con instructores."""
+    incluyendo el nombre del instructor mediante un JOIN con instructores.
+    Ruta protegida: requiere sesión iniciada."""
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute('''
@@ -76,9 +166,10 @@ def productos():
 
 
 @app.route('/productos/nuevo', methods=['GET', 'POST'])
+@login_required
 def nuevo_producto():
     """Formulario de registro de un curso, validado con Flask-WTF y
-    almacenado mediante INSERT en MySQL."""
+    almacenado mediante INSERT en MySQL. Ruta protegida."""
     form = CursoForm()
     form.id_instructor.choices = obtener_choices_instructores()
 
@@ -102,9 +193,11 @@ def nuevo_producto():
 
 
 @app.route('/productos/editar/<int:id_curso>', methods=['GET', 'POST'])
+@login_required
 def editar_producto(id_curso):
     """Recupera un curso por su identificador, permite editarlo con el mismo
-    formulario y guarda los cambios mediante UPDATE ... WHERE id_curso = %s."""
+    formulario y guarda los cambios mediante UPDATE ... WHERE id_curso = %s.
+    Ruta protegida."""
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute('SELECT * FROM cursos WHERE id_curso = %s', (id_curso,))
@@ -142,8 +235,10 @@ def editar_producto(id_curso):
 
 
 @app.route('/productos/eliminar/<int:id_curso>', methods=['POST'])
+@login_required
 def eliminar_producto(id_curso):
-    """Elimina únicamente el curso seleccionado mediante DELETE ... WHERE id_curso = %s."""
+    """Elimina únicamente el curso seleccionado mediante DELETE ... WHERE id_curso = %s.
+    Ruta protegida."""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('DELETE FROM cursos WHERE id_curso = %s', (id_curso,))
@@ -158,8 +253,9 @@ def eliminar_producto(id_curso):
 # ------------------- MÓDULO CLIENTES (Estudiantes) -------------------
 
 @app.route('/clientes')
+@login_required
 def clientes():
-    """Muestra los estudiantes registrados (datos de ejemplo)."""
+    """Muestra los estudiantes registrados (datos de ejemplo). Ruta protegida."""
     estudiantes = [
         {'nombre': 'María Fernanda Loor', 'correo': 'maria.loor@correo.com',
          'curso': 'Introducción a HTML5', 'estado': 'Activo'},
@@ -174,8 +270,10 @@ def clientes():
 
 
 @app.route('/clientes/nuevo', methods=['GET', 'POST'])
+@login_required
 def nuevo_cliente():
-    """Formulario de registro/edición de un estudiante, validado con Flask-WTF."""
+    """Formulario de registro/edición de un estudiante, validado con Flask-WTF.
+    Ruta protegida."""
     form = EstudianteForm()
 
     if form.validate_on_submit():
@@ -188,8 +286,9 @@ def nuevo_cliente():
 # ------------------- MÓDULO PROVEEDORES (Instructores) -------------------
 
 @app.route('/proveedores')
+@login_required
 def proveedores():
-    """Muestra los instructores de la plataforma (datos de ejemplo)."""
+    """Muestra los instructores de la plataforma (datos de ejemplo). Ruta protegida."""
     instructores = [
         {'nombre': 'Ing. Paola Ramírez', 'especialidad': 'Frontend y UX/UI',
          'correo': 'paola.ramirez@desarrolloweb.com'},
@@ -202,8 +301,10 @@ def proveedores():
 
 
 @app.route('/proveedores/nuevo', methods=['GET', 'POST'])
+@login_required
 def nuevo_proveedor():
-    """Formulario de registro/edición de un instructor, validado con Flask-WTF."""
+    """Formulario de registro/edición de un instructor, validado con Flask-WTF.
+    Ruta protegida."""
     form = InstructorForm()
 
     if form.validate_on_submit():
@@ -216,8 +317,9 @@ def nuevo_proveedor():
 # ------------------- MÓDULO FACTURACIÓN (Pagos) -------------------
 
 @app.route('/facturacion')
+@login_required
 def facturacion():
-    """Muestra los pagos/matrículas registrados (datos de ejemplo)."""
+    """Muestra los pagos/matrículas registrados (datos de ejemplo). Ruta protegida."""
     pagos = [
         {'numero': 'F-001', 'estudiante': 'María Fernanda Loor',
          'curso': 'Introducción a HTML5', 'monto': '$25.00', 'fecha': '01/08/2026'},
@@ -230,8 +332,10 @@ def facturacion():
 
 
 @app.route('/facturacion/nuevo', methods=['GET', 'POST'])
+@login_required
 def nuevo_pago():
-    """Formulario de registro/edición de un pago, validado con Flask-WTF."""
+    """Formulario de registro/edición de un pago, validado con Flask-WTF.
+    Ruta protegida."""
     form = PagoForm()
 
     if form.validate_on_submit():

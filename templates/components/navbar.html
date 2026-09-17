@@ -8,10 +8,18 @@
         <div class="collapse navbar-collapse" id="menuNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('inicio') }}">Inicio</a></li>
+
+                {% if current_user.is_authenticated %}
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('productos') }}">Cursos</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('clientes') }}">Estudiantes</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('proveedores') }}">Instructores</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('facturacion') }}">Pagos</a></li>
+                <li class="nav-item"><span class="nav-link disabled">👤 {{ current_user.usuario }}</span></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Iniciar sesión</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('registro') }}">Registrarse</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

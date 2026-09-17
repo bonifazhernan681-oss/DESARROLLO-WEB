@@ -1,7 +1,7 @@
 -- ============================================================
 -- sql/esquema.sql
--- Proyecto Integrador U4 - Semana 13
--- Plataforma de Cursos - Modelo relacional mínimo (MySQL)
+-- Proyecto Integrador U4 - Semana 14
+-- Plataforma de Cursos - Modelo relacional (MySQL)
 -- Ejecutar completo en MySQL Workbench (o consola) para recrear
 -- la base de datos y sus tablas desde cero.
 -- ============================================================
@@ -47,6 +47,17 @@ CREATE TABLE IF NOT EXISTS pagos (
     fecha         DATE NOT NULL,
     FOREIGN KEY (id_estudiante) REFERENCES estudiantes(id_estudiante),
     FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
+);
+
+-- Tabla Usuarios (Semana 14) - sistema de autenticación (login)
+-- Almacena únicamente los usuarios autorizados para ingresar al sistema.
+-- La contraseña nunca se guarda en texto plano: se transforma con
+-- generate_password_hash() antes del INSERT (ver forms/usuario_form.py
+-- y la ruta /registro en app.py).
+CREATE TABLE IF NOT EXISTS usuarios (
+    id       INT AUTO_INCREMENT PRIMARY KEY,
+    usuario  VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
 );
 
 -- ------------------------------------------------------------
