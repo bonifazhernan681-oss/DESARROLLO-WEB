@@ -5,7 +5,7 @@
 {% block content %}
 <div class="modulo-header">
     <h1>🧾 Módulo de Facturación</h1>
-    <p>Pagos y matrículas registrados en la plataforma (datos de ejemplo)</p>
+    <p>Pagos y matrículas registrados en la plataforma (persistidos en PostgreSQL, con JOIN a estudiantes y cursos)</p>
     <a href="{{ url_for('nuevo_pago') }}" class="btn btn-primary">+ Nuevo pago</a>
 </div>
 
@@ -14,21 +14,38 @@
         <table class="table table-hover align-middle tabla-modulo">
             <thead>
                 <tr>
-                    <th>N° Factura</th>
+                    <th>N° Pago</th>
                     <th>Estudiante</th>
                     <th>Curso</th>
                     <th>Monto</th>
                     <th>Fecha</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for pago in pagos %}
                 <tr>
-                    <td>{{ pago.numero }}</td>
+                    <td>{{ pago.id_pago }}</td>
                     <td>{{ pago.estudiante }}</td>
                     <td>{{ pago.curso }}</td>
-                    <td>{{ pago.monto }}</td>
-                    <td>{{ pago.fecha }}</td>
+                    <td>${{ "%.2f"|format(pago.monto) }}</td>
+                    <td>{{ pago.fecha.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('editar_pago', id_pago=pago.id_pago) }}"
+                               class="btn btn-sm btn-outline-primary">Modificar</a>
+
+                            <form method="POST"
+                                  action="{{ url_for('eliminar_pago', id_pago=pago.id_pago) }}"
+                                  onsubmit="return confirm('¿Eliminar el pago N° {{ pago.id_pago }}? Esta acción no se puede deshacer.');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-muted">Aún no hay pagos registrados. Usa el botón "+ Nuevo pago" para agregar el primero.</td>
                 </tr>
                 {% endfor %}
             </tbody>

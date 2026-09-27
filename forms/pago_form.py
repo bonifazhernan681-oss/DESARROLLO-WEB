@@ -1,32 +1,31 @@
 """
 forms/pago_form.py
 Formulario del módulo Facturación (Pagos), basado en Flask-WTF y WTForms.
+
+Semana 15: id_estudiante e id_curso pasan a ser SelectField (claves
+foráneas reales hacia estudiantes y cursos), alineados con la tabla
+pagos en PostgreSQL. Sus choices se cargan dinámicamente desde la base
+de datos en app.py antes de validar el formulario.
 """
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, DateField, SubmitField
-from wtforms.validators import DataRequired, Length, NumberRange
+from wtforms import SelectField, FloatField, DateField, SubmitField
+from wtforms.validators import DataRequired, NumberRange
 
 
 class PagoForm(FlaskForm):
     """Formulario para registrar o editar un pago/matrícula."""
 
-    numero = StringField(
-        'N° de factura',
-        validators=[DataRequired(message='El número de factura es obligatorio.'),
-                    Length(min=3, max=20, message='El número de factura debe tener entre 3 y 20 caracteres.')]
-    )
-
-    estudiante = StringField(
+    id_estudiante = SelectField(
         'Estudiante',
-        validators=[DataRequired(message='El nombre del estudiante es obligatorio.'),
-                    Length(min=3, max=100, message='El nombre debe tener entre 3 y 100 caracteres.')]
+        coerce=int,
+        validators=[DataRequired(message='Seleccione un estudiante.')]
     )
 
-    curso = StringField(
+    id_curso = SelectField(
         'Curso',
-        validators=[DataRequired(message='El curso es obligatorio.'),
-                    Length(min=3, max=100, message='El curso debe tener entre 3 y 100 caracteres.')]
+        coerce=int,
+        validators=[DataRequired(message='Seleccione un curso.')]
     )
 
     monto = FloatField(
@@ -37,7 +36,7 @@ class PagoForm(FlaskForm):
 
     fecha = DateField(
         'Fecha de pago',
-        format='%d/%m/%Y',
+        format='%Y-%m-%d',
         validators=[DataRequired(message='La fecha de pago es obligatoria.')]
     )
 

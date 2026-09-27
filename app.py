@@ -1,21 +1,21 @@
 """
 app.py
-Proyecto Integrador U4 - Avance 14/16
-Implementación de un sistema de login funcional.
+Proyecto Integrador U4 - Avance 15/16
+Construcción de una aplicación con funciones CRUD sobre PostgreSQL.
 
-Este archivo continúa la aplicación Flask desarrollada en la Semana 13.
-Se incorpora un sistema de autenticación de usuarios con Flask-Login y
-Werkzeug: registro de usuarios, almacenamiento de contraseñas mediante
-hash, inicio de sesión, sesión activa, protección de rutas privadas y
-cierre de sesión. El módulo de Productos (Cursos) sigue trabajando
-contra MySQL (plataforma_cursos) sin cambios en su lógica CRUD.
+Continúa la aplicación Flask de las semanas anteriores. Los cuatro
+módulos principales (Cursos, Estudiantes, Instructores, Pagos) quedan
+conectados a PostgreSQL con operaciones completas de Crear, Leer,
+Actualizar y Eliminar, usando siempre consultas parametrizadas. El
+sistema de login de la Semana 14 (Flask-Login + Werkzeug) se mantiene
+funcionando sin cambios en su lógica, solo migrado a PostgreSQL.
 """
 
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from conexion.conexion import get_connection
+from conexion.conexion import get_connection, get_dict_cursor
 
 from forms.curso_form import CursoForm
 from forms.estudiante_form import EstudianteForm
@@ -127,10 +127,10 @@ def logout():
     return redirect(url_for('login'))
 
 
-# ------------------- MÓDULO PRODUCTOS (Cursos) - MYSQL -------------------
+# ------------------- MÓDULO PRODUCTOS (Cursos) -------------------
 
 def obtener_choices_instructores():
-    """Consulta los instructores en MySQL y arma la lista de choices
+    """Consulta los instructores en PostgreSQL y arma la lista de choices
     (id_instructor, nombre) para el SelectField del formulario de cursos."""
     conn = get_connection()
     cursor = conn.cursor()
@@ -144,11 +144,11 @@ def obtener_choices_instructores():
 @app.route('/productos')
 @login_required
 def productos():
-    """Muestra el catálogo de cursos recuperado directamente desde MySQL,
-    incluyendo el nombre del instructor mediante un JOIN con instructores.
-    Ruta protegida: requiere sesión iniciada."""
+    """Muestra el catálogo de cursos recuperado directamente desde
+    PostgreSQL, incluyendo el nombre del instructor mediante un JOIN
+    con instructores. Ruta protegida: requiere sesión iniciada."""
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = get_dict_cursor(conn)
     cursor.execute('''
         SELECT c.id_curso, c.nombre, c.descripcion, c.categoria,
                c.precio, c.cupos, c.id_instructor, i.nombre AS instructor
@@ -169,7 +169,7 @@ def productos():
 @login_required
 def nuevo_producto():
     """Formulario de registro de un curso, validado con Flask-WTF y
-    almacenado mediante INSERT en MySQL. Ruta protegida."""
+    almacenado mediante INSERT en PostgreSQL. Ruta protegida."""
     form = CursoForm()
     form.id_instructor.choices = obtener_choices_instructores()
 
@@ -199,7 +199,7 @@ def editar_producto(id_curso):
     formulario y guarda los cambios mediante UPDATE ... WHERE id_curso = %s.
     Ruta protegida."""
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = get_dict_cursor(conn)
     cursor.execute('SELECT * FROM cursos WHERE id_curso = %s', (id_curso,))
     curso = cursor.fetchone()
     cursor.close()
@@ -238,15 +238,25 @@ def editar_producto(id_curso):
 @login_required
 def eliminar_producto(id_curso):
     """Elimina únicamente el curso seleccionado mediante DELETE ... WHERE id_curso = %s.
-    Ruta protegida."""
+    Ruta protegida.
+
+    Nota: si el curso tiene pagos asociados, PostgreSQL rechazará el
+    DELETE por la FOREIGN KEY de pagos.id_curso (integridad referencial);
+    en ese caso se informa el error al usuario en vez de dejar pagos
+    "huérfanos" o mostrar una pantalla de error técnico."""
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM cursos WHERE id_curso = %s', (id_curso,))
-    conn.commit()
-    cursor.close()
-    conn.close()
+    try:
+        cursor.execute('DELETE FROM cursos WHERE id_curso = %s', (id_curso,))
+        conn.commit()
+        flash('Curso eliminado correctamente.', 'success')
+    except Exception:
+        conn.rollback()
+        flash('No se puede eliminar: el curso tiene pagos asociados.', 'danger')
+    finally:
+        cursor.close()
+        conn.close()
 
-    flash('Curso eliminado correctamente.', 'success')
     return redirect(url_for('productos'))
 
 
@@ -255,32 +265,104 @@ def eliminar_producto(id_curso):
 @app.route('/clientes')
 @login_required
 def clientes():
-    """Muestra los estudiantes registrados (datos de ejemplo). Ruta protegida."""
-    estudiantes = [
-        {'nombre': 'María Fernanda Loor', 'correo': 'maria.loor@correo.com',
-         'curso': 'Introducción a HTML5', 'estado': 'Activo'},
-        {'nombre': 'Carlos Andrés Zambrano', 'correo': 'carlos.zambrano@correo.com',
-         'curso': 'Python con Flask', 'estado': 'Activo'},
-        {'nombre': 'Génesis Priscila Vera', 'correo': 'genesis.vera@correo.com',
-         'curso': 'CSS3 y diseño responsive', 'estado': 'Inactivo'},
-        {'nombre': 'Jonathan David Chávez', 'correo': 'jonathan.chavez@correo.com',
-         'curso': 'Bases de datos relacionales', 'estado': 'Activo'},
-    ]
+    """Muestra los estudiantes registrados, recuperados desde PostgreSQL.
+    Ruta protegida."""
+    conn = get_connection()
+    cursor = get_dict_cursor(conn)
+    cursor.execute('SELECT * FROM estudiantes ORDER BY id_estudiante DESC')
+    estudiantes = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
     return render_template('clientes.html', estudiantes=estudiantes)
 
 
 @app.route('/clientes/nuevo', methods=['GET', 'POST'])
 @login_required
 def nuevo_cliente():
-    """Formulario de registro/edición de un estudiante, validado con Flask-WTF.
-    Ruta protegida."""
+    """Formulario de registro de un estudiante, validado con Flask-WTF
+    y almacenado mediante INSERT en PostgreSQL. Ruta protegida."""
     form = EstudianteForm()
 
     if form.validate_on_submit():
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            '''INSERT INTO estudiantes (nombre, cedula, telefono, correo)
+               VALUES (%s, %s, %s, %s)''',
+            (form.nombre.data, form.cedula.data, form.telefono.data, form.correo.data)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
         flash(f'Estudiante "{form.nombre.data}" registrado correctamente.', 'success')
         return redirect(url_for('clientes'))
 
-    return render_template('formulario_cliente.html', form=form)
+    return render_template('formulario_cliente.html', form=form, modo='nuevo')
+
+
+@app.route('/clientes/editar/<int:id_estudiante>', methods=['GET', 'POST'])
+@login_required
+def editar_cliente(id_estudiante):
+    """Recupera un estudiante por su identificador, permite editarlo y
+    guarda los cambios mediante UPDATE ... WHERE id_estudiante = %s.
+    Ruta protegida."""
+    conn = get_connection()
+    cursor = get_dict_cursor(conn)
+    cursor.execute('SELECT * FROM estudiantes WHERE id_estudiante = %s', (id_estudiante,))
+    estudiante = cursor.fetchone()
+    cursor.close()
+
+    if estudiante is None:
+        conn.close()
+        flash('El estudiante solicitado no existe.', 'danger')
+        return redirect(url_for('clientes'))
+
+    form = EstudianteForm(data=estudiante) if request.method == 'GET' else EstudianteForm()
+
+    if form.validate_on_submit():
+        cursor = conn.cursor()
+        cursor.execute(
+            '''UPDATE estudiantes
+               SET nombre = %s, cedula = %s, telefono = %s, correo = %s
+               WHERE id_estudiante = %s''',
+            (form.nombre.data, form.cedula.data, form.telefono.data,
+             form.correo.data, id_estudiante)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash(f'Estudiante "{form.nombre.data}" actualizado correctamente.', 'success')
+        return redirect(url_for('clientes'))
+
+    conn.close()
+    return render_template('formulario_cliente.html', form=form, modo='editar', id_estudiante=id_estudiante)
+
+
+@app.route('/clientes/eliminar/<int:id_estudiante>', methods=['POST'])
+@login_required
+def eliminar_cliente(id_estudiante):
+    """Elimina únicamente el estudiante seleccionado. Ruta protegida.
+
+    Nota: si el estudiante tiene pagos asociados, PostgreSQL rechazará el
+    DELETE por la FOREIGN KEY de pagos.id_estudiante (integridad
+    referencial); en ese caso se informa el error al usuario."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('DELETE FROM estudiantes WHERE id_estudiante = %s', (id_estudiante,))
+        conn.commit()
+        flash('Estudiante eliminado correctamente.', 'success')
+    except Exception:
+        conn.rollback()
+        flash('No se puede eliminar: el estudiante tiene pagos asociados.', 'danger')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('clientes'))
 
 
 # ------------------- MÓDULO PROVEEDORES (Instructores) -------------------
@@ -288,61 +370,236 @@ def nuevo_cliente():
 @app.route('/proveedores')
 @login_required
 def proveedores():
-    """Muestra los instructores de la plataforma (datos de ejemplo). Ruta protegida."""
-    instructores = [
-        {'nombre': 'Ing. Paola Ramírez', 'especialidad': 'Frontend y UX/UI',
-         'correo': 'paola.ramirez@desarrolloweb.com'},
-        {'nombre': 'Ing. Diego Salazar', 'especialidad': 'Backend con Python',
-         'correo': 'diego.salazar@desarrolloweb.com'},
-        {'nombre': 'Ing. Lucía Torres', 'especialidad': 'Bases de Datos',
-         'correo': 'lucia.torres@desarrolloweb.com'},
-    ]
+    """Muestra los instructores de la plataforma, recuperados desde
+    PostgreSQL. Ruta protegida."""
+    conn = get_connection()
+    cursor = get_dict_cursor(conn)
+    cursor.execute('SELECT * FROM instructores ORDER BY id_instructor DESC')
+    instructores = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
     return render_template('proveedores.html', instructores=instructores)
 
 
 @app.route('/proveedores/nuevo', methods=['GET', 'POST'])
 @login_required
 def nuevo_proveedor():
-    """Formulario de registro/edición de un instructor, validado con Flask-WTF.
-    Ruta protegida."""
+    """Formulario de registro de un instructor, validado con Flask-WTF
+    y almacenado mediante INSERT en PostgreSQL. Ruta protegida."""
     form = InstructorForm()
 
     if form.validate_on_submit():
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            '''INSERT INTO instructores (nombre, especialidad, correo)
+               VALUES (%s, %s, %s)''',
+            (form.nombre.data, form.especialidad.data, form.correo.data)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
         flash(f'Instructor "{form.nombre.data}" registrado correctamente.', 'success')
         return redirect(url_for('proveedores'))
 
-    return render_template('formulario_proveedor.html', form=form)
+    return render_template('formulario_proveedor.html', form=form, modo='nuevo')
+
+
+@app.route('/proveedores/editar/<int:id_instructor>', methods=['GET', 'POST'])
+@login_required
+def editar_proveedor(id_instructor):
+    """Recupera un instructor por su identificador, permite editarlo y
+    guarda los cambios mediante UPDATE ... WHERE id_instructor = %s.
+    Ruta protegida."""
+    conn = get_connection()
+    cursor = get_dict_cursor(conn)
+    cursor.execute('SELECT * FROM instructores WHERE id_instructor = %s', (id_instructor,))
+    instructor = cursor.fetchone()
+    cursor.close()
+
+    if instructor is None:
+        conn.close()
+        flash('El instructor solicitado no existe.', 'danger')
+        return redirect(url_for('proveedores'))
+
+    form = InstructorForm(data=instructor) if request.method == 'GET' else InstructorForm()
+
+    if form.validate_on_submit():
+        cursor = conn.cursor()
+        cursor.execute(
+            '''UPDATE instructores
+               SET nombre = %s, especialidad = %s, correo = %s
+               WHERE id_instructor = %s''',
+            (form.nombre.data, form.especialidad.data, form.correo.data, id_instructor)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash(f'Instructor "{form.nombre.data}" actualizado correctamente.', 'success')
+        return redirect(url_for('proveedores'))
+
+    conn.close()
+    return render_template('formulario_proveedor.html', form=form, modo='editar', id_instructor=id_instructor)
+
+
+@app.route('/proveedores/eliminar/<int:id_instructor>', methods=['POST'])
+@login_required
+def eliminar_proveedor(id_instructor):
+    """Elimina únicamente el instructor seleccionado. Ruta protegida.
+
+    Nota: si el instructor dicta algún curso, PostgreSQL rechazará el
+    DELETE por la FOREIGN KEY de cursos.id_instructor (integridad
+    referencial); en ese caso se informa el error al usuario en vez de
+    dejar cursos "huérfanos"."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('DELETE FROM instructores WHERE id_instructor = %s', (id_instructor,))
+        conn.commit()
+        flash('Instructor eliminado correctamente.', 'success')
+    except Exception:
+        conn.rollback()
+        flash('No se puede eliminar: el instructor tiene cursos asociados.', 'danger')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('proveedores'))
 
 
 # ------------------- MÓDULO FACTURACIÓN (Pagos) -------------------
 
+def obtener_choices_estudiantes():
+    """Consulta los estudiantes en PostgreSQL y arma la lista de choices
+    (id_estudiante, nombre) para el SelectField del formulario de pagos."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id_estudiante, nombre FROM estudiantes ORDER BY nombre')
+    estudiantes = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [(id_estudiante, nombre) for (id_estudiante, nombre) in estudiantes]
+
+
+def obtener_choices_cursos():
+    """Consulta los cursos en PostgreSQL y arma la lista de choices
+    (id_curso, nombre) para el SelectField del formulario de pagos."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id_curso, nombre FROM cursos ORDER BY nombre')
+    cursos = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [(id_curso, nombre) for (id_curso, nombre) in cursos]
+
+
 @app.route('/facturacion')
 @login_required
 def facturacion():
-    """Muestra los pagos/matrículas registrados (datos de ejemplo). Ruta protegida."""
-    pagos = [
-        {'numero': 'F-001', 'estudiante': 'María Fernanda Loor',
-         'curso': 'Introducción a HTML5', 'monto': '$25.00', 'fecha': '01/08/2026'},
-        {'numero': 'F-002', 'estudiante': 'Carlos Andrés Zambrano',
-         'curso': 'Python con Flask', 'monto': '$40.00', 'fecha': '05/08/2026'},
-        {'numero': 'F-003', 'estudiante': 'Jonathan David Chávez',
-         'curso': 'Bases de datos relacionales', 'monto': '$35.00', 'fecha': '10/08/2026'},
-    ]
+    """Muestra los pagos/matrículas registrados, recuperados desde
+    PostgreSQL mediante un JOIN con estudiantes y cursos para mostrar
+    sus nombres en lugar de solo el id. Ruta protegida."""
+    conn = get_connection()
+    cursor = get_dict_cursor(conn)
+    cursor.execute('''
+        SELECT p.id_pago, p.monto, p.fecha,
+               e.id_estudiante, e.nombre AS estudiante,
+               c.id_curso, c.nombre AS curso
+        FROM pagos p
+        JOIN estudiantes e ON p.id_estudiante = e.id_estudiante
+        JOIN cursos c ON p.id_curso = c.id_curso
+        ORDER BY p.id_pago DESC
+    ''')
+    pagos = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
     return render_template('facturacion.html', pagos=pagos)
 
 
 @app.route('/facturacion/nuevo', methods=['GET', 'POST'])
 @login_required
 def nuevo_pago():
-    """Formulario de registro/edición de un pago, validado con Flask-WTF.
-    Ruta protegida."""
+    """Formulario de registro de un pago, validado con Flask-WTF y
+    almacenado mediante INSERT en PostgreSQL. Ruta protegida."""
     form = PagoForm()
+    form.id_estudiante.choices = obtener_choices_estudiantes()
+    form.id_curso.choices = obtener_choices_cursos()
 
     if form.validate_on_submit():
-        flash(f'Pago "{form.numero.data}" registrado correctamente.', 'success')
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            '''INSERT INTO pagos (id_estudiante, id_curso, monto, fecha)
+               VALUES (%s, %s, %s, %s)''',
+            (form.id_estudiante.data, form.id_curso.data, form.monto.data, form.fecha.data)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash('Pago registrado correctamente.', 'success')
         return redirect(url_for('facturacion'))
 
-    return render_template('formulario_facturacion.html', form=form)
+    return render_template('formulario_facturacion.html', form=form, modo='nuevo')
+
+
+@app.route('/facturacion/editar/<int:id_pago>', methods=['GET', 'POST'])
+@login_required
+def editar_pago(id_pago):
+    """Recupera un pago por su identificador, permite editarlo y guarda
+    los cambios mediante UPDATE ... WHERE id_pago = %s. Ruta protegida."""
+    conn = get_connection()
+    cursor = get_dict_cursor(conn)
+    cursor.execute('SELECT * FROM pagos WHERE id_pago = %s', (id_pago,))
+    pago = cursor.fetchone()
+    cursor.close()
+
+    if pago is None:
+        conn.close()
+        flash('El pago solicitado no existe.', 'danger')
+        return redirect(url_for('facturacion'))
+
+    form = PagoForm(data=pago) if request.method == 'GET' else PagoForm()
+    form.id_estudiante.choices = obtener_choices_estudiantes()
+    form.id_curso.choices = obtener_choices_cursos()
+
+    if form.validate_on_submit():
+        cursor = conn.cursor()
+        cursor.execute(
+            '''UPDATE pagos
+               SET id_estudiante = %s, id_curso = %s, monto = %s, fecha = %s
+               WHERE id_pago = %s''',
+            (form.id_estudiante.data, form.id_curso.data, form.monto.data,
+             form.fecha.data, id_pago)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash('Pago actualizado correctamente.', 'success')
+        return redirect(url_for('facturacion'))
+
+    conn.close()
+    return render_template('formulario_facturacion.html', form=form, modo='editar', id_pago=id_pago)
+
+
+@app.route('/facturacion/eliminar/<int:id_pago>', methods=['POST'])
+@login_required
+def eliminar_pago(id_pago):
+    """Elimina únicamente el pago seleccionado. Ruta protegida."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM pagos WHERE id_pago = %s', (id_pago,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash('Pago eliminado correctamente.', 'success')
+    return redirect(url_for('facturacion'))
 
 
 if __name__ == '__main__':

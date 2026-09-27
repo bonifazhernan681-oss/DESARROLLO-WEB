@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Desarrollo Web - Nuevo estudiante{% endblock %}
+{% block title %}Desarrollo Web - {{ 'Editar estudiante' if modo == 'editar' else 'Nuevo estudiante' }}{% endblock %}
 
 {% block content %}
 <div class="modulo-header">
-    <h1>🧑‍🎓 Registro de Estudiante</h1>
-    <p>Complete el formulario para registrar un nuevo estudiante</p>
+    <h1>🧑‍🎓 {{ 'Modificar Estudiante' if modo == 'editar' else 'Registro de Estudiante' }}</h1>
+    <p>Complete el formulario para {{ 'actualizar el' if modo == 'editar' else 'registrar un nuevo' }} estudiante</p>
 </div>
 
 <div class="container pb-5">
     <div class="row justify-content-center">
         <div class="col-md-7">
-            <form method="POST" action="{{ url_for('nuevo_cliente') }}" novalidate>
+            <form method="POST"
+                  action="{{ url_for('editar_cliente', id_estudiante=id_estudiante) if modo == 'editar' else url_for('nuevo_cliente') }}"
+                  novalidate>
                 {{ form.hidden_tag() }}
 
                 <div class="mb-3">
@@ -23,25 +25,25 @@
                 </div>
 
                 <div class="mb-3">
-                    {{ form.correo.label(class="form-label") }}
-                    {{ form.correo(class="form-control" + (" is-invalid" if form.correo.errors else "")) }}
-                    {% for error in form.correo.errors %}
+                    {{ form.cedula.label(class="form-label") }}
+                    {{ form.cedula(class="form-control" + (" is-invalid" if form.cedula.errors else "")) }}
+                    {% for error in form.cedula.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
 
                 <div class="mb-3">
-                    {{ form.curso.label(class="form-label") }}
-                    {{ form.curso(class="form-control" + (" is-invalid" if form.curso.errors else "")) }}
-                    {% for error in form.curso.errors %}
+                    {{ form.telefono.label(class="form-label") }}
+                    {{ form.telefono(class="form-control" + (" is-invalid" if form.telefono.errors else "")) }}
+                    {% for error in form.telefono.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
 
                 <div class="mb-4">
-                    {{ form.estado.label(class="form-label") }}
-                    {{ form.estado(class="form-select" + (" is-invalid" if form.estado.errors else "")) }}
-                    {% for error in form.estado.errors %}
+                    {{ form.correo.label(class="form-label") }}
+                    {{ form.correo(class="form-control" + (" is-invalid" if form.correo.errors else "")) }}
+                    {% for error in form.correo.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>

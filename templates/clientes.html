@@ -5,7 +5,7 @@
 {% block content %}
 <div class="modulo-header">
     <h1>🧑‍🎓 Módulo de Estudiantes</h1>
-    <p>Estudiantes registrados en la plataforma (datos de ejemplo)</p>
+    <p>Estudiantes registrados en la plataforma (persistidos en PostgreSQL)</p>
     <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-primary">+ Nuevo estudiante</a>
 </div>
 
@@ -16,25 +16,36 @@
                 <tr>
                     <th>#</th>
                     <th>Nombre</th>
+                    <th>Cédula</th>
+                    <th>Teléfono</th>
                     <th>Correo</th>
-                    <th>Curso inscrito</th>
-                    <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for estudiante in estudiantes %}
                 <tr>
-                    <td>{{ loop.index }}</td>
+                    <td>{{ estudiante.id_estudiante }}</td>
                     <td>{{ estudiante.nombre }}</td>
+                    <td>{{ estudiante.cedula }}</td>
+                    <td>{{ estudiante.telefono or '—' }}</td>
                     <td>{{ estudiante.correo }}</td>
-                    <td>{{ estudiante.curso }}</td>
                     <td>
-                        {% if estudiante.estado == 'Activo' %}
-                        <span class="badge bg-success badge-estado">{{ estudiante.estado }}</span>
-                        {% else %}
-                        <span class="badge bg-secondary badge-estado">{{ estudiante.estado }}</span>
-                        {% endif %}
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('editar_cliente', id_estudiante=estudiante.id_estudiante) }}"
+                               class="btn btn-sm btn-outline-primary">Modificar</a>
+
+                            <form method="POST"
+                                  action="{{ url_for('eliminar_cliente', id_estudiante=estudiante.id_estudiante) }}"
+                                  onsubmit="return confirm('¿Eliminar al estudiante {{ estudiante.nombre }}? Esta acción no se puede deshacer.');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </div>
                     </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-muted">Aún no hay estudiantes registrados. Usa el botón "+ Nuevo estudiante" para agregar el primero.</td>
                 </tr>
                 {% endfor %}
             </tbody>

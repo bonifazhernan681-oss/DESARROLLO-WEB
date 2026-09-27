@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Desarrollo Web - Nuevo instructor{% endblock %}
+{% block title %}Desarrollo Web - {{ 'Editar instructor' if modo == 'editar' else 'Nuevo instructor' }}{% endblock %}
 
 {% block content %}
 <div class="modulo-header">
-    <h1>👨‍🏫 Registro de Instructor</h1>
-    <p>Complete el formulario para registrar un nuevo instructor</p>
+    <h1>👨‍🏫 {{ 'Modificar Instructor' if modo == 'editar' else 'Registro de Instructor' }}</h1>
+    <p>Complete el formulario para {{ 'actualizar el' if modo == 'editar' else 'registrar un nuevo' }} instructor</p>
 </div>
 
 <div class="container pb-5">
     <div class="row justify-content-center">
         <div class="col-md-7">
-            <form method="POST" action="{{ url_for('nuevo_proveedor') }}" novalidate>
+            <form method="POST"
+                  action="{{ url_for('editar_proveedor', id_instructor=id_instructor) if modo == 'editar' else url_for('nuevo_proveedor') }}"
+                  novalidate>
                 {{ form.hidden_tag() }}
 
                 <div class="mb-3">

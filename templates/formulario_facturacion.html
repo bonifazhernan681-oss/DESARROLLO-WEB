@@ -1,39 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}Desarrollo Web - Nuevo pago{% endblock %}
+{% block title %}Desarrollo Web - {{ 'Editar pago' if modo == 'editar' else 'Nuevo pago' }}{% endblock %}
 
 {% block content %}
 <div class="modulo-header">
-    <h1>🧾 Registro de Pago</h1>
-    <p>Complete el formulario para registrar un nuevo pago o matrícula</p>
+    <h1>🧾 {{ 'Modificar Pago' if modo == 'editar' else 'Registro de Pago' }}</h1>
+    <p>Complete el formulario para {{ 'actualizar el' if modo == 'editar' else 'registrar un nuevo' }} pago o matrícula</p>
 </div>
 
 <div class="container pb-5">
     <div class="row justify-content-center">
         <div class="col-md-7">
-            <form method="POST" action="{{ url_for('nuevo_pago') }}" novalidate>
+            <form method="POST"
+                  action="{{ url_for('editar_pago', id_pago=id_pago) if modo == 'editar' else url_for('nuevo_pago') }}"
+                  novalidate>
                 {{ form.hidden_tag() }}
 
                 <div class="mb-3">
-                    {{ form.numero.label(class="form-label") }}
-                    {{ form.numero(class="form-control" + (" is-invalid" if form.numero.errors else "")) }}
-                    {% for error in form.numero.errors %}
+                    {{ form.id_estudiante.label(class="form-label") }}
+                    {{ form.id_estudiante(class="form-select" + (" is-invalid" if form.id_estudiante.errors else "")) }}
+                    {% for error in form.id_estudiante.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
 
                 <div class="mb-3">
-                    {{ form.estudiante.label(class="form-label") }}
-                    {{ form.estudiante(class="form-control" + (" is-invalid" if form.estudiante.errors else "")) }}
-                    {% for error in form.estudiante.errors %}
-                    <div class="invalid-feedback">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="mb-3">
-                    {{ form.curso.label(class="form-label") }}
-                    {{ form.curso(class="form-control" + (" is-invalid" if form.curso.errors else "")) }}
-                    {% for error in form.curso.errors %}
+                    {{ form.id_curso.label(class="form-label") }}
+                    {{ form.id_curso(class="form-select" + (" is-invalid" if form.id_curso.errors else "")) }}
+                    {% for error in form.id_curso.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
@@ -48,7 +42,7 @@
 
                 <div class="mb-4">
                     {{ form.fecha.label(class="form-label") }}
-                    {{ form.fecha(class="form-control" + (" is-invalid" if form.fecha.errors else ""), placeholder="dd/mm/aaaa") }}
+                    {{ form.fecha(class="form-control" + (" is-invalid" if form.fecha.errors else ""), type="date") }}
                     {% for error in form.fecha.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}

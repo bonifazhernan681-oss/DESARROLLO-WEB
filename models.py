@@ -5,7 +5,7 @@ Modelo de Usuario para el sistema de autenticación con Flask-Login.
 """
 
 from flask_login import UserMixin
-from conexion.conexion import get_connection
+from conexion.conexion import get_connection, get_dict_cursor
 
 
 class Usuario(UserMixin):
@@ -27,7 +27,7 @@ def obtener_usuario_por_id(id_usuario):
     """Recupera un usuario por su id. Usado por load_user() en cada
     request para reconstruir el objeto Usuario desde la sesión."""
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = get_dict_cursor(conn)
     cursor.execute('SELECT id, usuario FROM usuarios WHERE id = %s', (id_usuario,))
     fila = cursor.fetchone()
     cursor.close()
@@ -43,7 +43,7 @@ def obtener_usuario_por_nombre(usuario):
     usuario según su nombre de usuario. Usado al registrar (para evitar
     duplicados) y al validar el login."""
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = get_dict_cursor(conn)
     cursor.execute('SELECT id, usuario, password FROM usuarios WHERE usuario = %s', (usuario,))
     fila = cursor.fetchone()
     cursor.close()

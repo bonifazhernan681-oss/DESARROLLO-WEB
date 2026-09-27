@@ -5,23 +5,49 @@
 {% block content %}
 <div class="modulo-header">
     <h1>👨‍🏫 Módulo de Instructores</h1>
-    <p>Instructores que dictan los cursos de la plataforma (datos de ejemplo)</p>
+    <p>Instructores que dictan los cursos de la plataforma (persistidos en PostgreSQL)</p>
     <a href="{{ url_for('nuevo_proveedor') }}" class="btn btn-primary">+ Nuevo instructor</a>
 </div>
 
 <div class="container pb-5">
-    <div class="row g-4">
-        {% for instructor in instructores %}
-        <div class="col-md-4">
-            <div class="card h-100 p-3 text-center">
-                <div class="card-body">
-                    <h5 class="card-title">{{ instructor.nombre }}</h5>
-                    <p class="card-text text-muted mb-1">Especialidad: {{ instructor.especialidad }}</p>
-                    <p class="card-text text-muted">Correo: {{ instructor.correo }}</p>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle tabla-modulo">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Especialidad</th>
+                    <th>Correo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for instructor in instructores %}
+                <tr>
+                    <td>{{ instructor.id_instructor }}</td>
+                    <td>{{ instructor.nombre }}</td>
+                    <td>{{ instructor.especialidad }}</td>
+                    <td>{{ instructor.correo }}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('editar_proveedor', id_instructor=instructor.id_instructor) }}"
+                               class="btn btn-sm btn-outline-primary">Modificar</a>
+
+                            <form method="POST"
+                                  action="{{ url_for('eliminar_proveedor', id_instructor=instructor.id_instructor) }}"
+                                  onsubmit="return confirm('¿Eliminar al instructor {{ instructor.nombre }}? Esta acción no se puede deshacer.');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-muted">Aún no hay instructores registrados. Usa el botón "+ Nuevo instructor" para agregar el primero.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
